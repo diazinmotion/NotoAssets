@@ -174,6 +174,7 @@ class Location extends Management_Controller {
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
 	}
 
+  // tetsing commit
   function ajax_get_location(){
     $data   = [];
     $like   = [];
