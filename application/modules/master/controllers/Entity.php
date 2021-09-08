@@ -187,7 +187,7 @@ class Entity extends Management_Controller {
   function ajax_get_entity(){
     $data   = [];
     $like   = [];
-    $where  = ['deleted_at' => null];
+    $where  = ['deleted_at' => null, 'flag_active' => 1];
     $param  = $this->input->post('param');
 
     if($param){

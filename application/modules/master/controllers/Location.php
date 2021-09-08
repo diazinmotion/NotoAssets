@@ -66,10 +66,10 @@ class Location extends Management_Controller {
     }
 
     // join dengan tabel entity
-    $join = ['master_entity e' => 'e.id = l.entity_id AND e.deleted_at IS NULL'];
+    $join = ['master_entity e' => 'e.id = l.entity_id AND e.deleted_at IS NULL AND e.flag_active = 1'];
 
-    $db_total = $this->M_location->get_count('master_location l', $where, $join, 'left', null, null, null, $like, 'l.id');
-    $db_data 	= $this->M_location->get('master_location l', $where, $join, 'left', ['name' => 'asc'], $limit, $offset, $like, 'l.id, l.name, e.code as entity_code, e.name as entity_name');
+    $db_total = $this->M_location->get_count('master_location l', $where, $join, null, null, null, null, $like, 'l.id');
+    $db_data 	= $this->M_location->get('master_location l', $where, $join, null, ['name' => 'asc'], $limit, $offset, $like, 'l.id, l.name, e.code as entity_code, e.name as entity_name');
     foreach($db_data as $i => $v) {
 
       $action = [
@@ -146,7 +146,7 @@ class Location extends Management_Controller {
 			$post = $this->input->post();
       $join = ['master_entity e' => 'e.id = l.entity_id AND e.deleted_at IS NULL'];
       
-      $db 	= $this->M_location->get('master_location l', ['l.id' => $post['id']], $join, 'left', ['name' => 'asc'], null, null, null, 'l.id, l.name, e.id as entity_id, e.code as entity_code, e.name as entity_name');
+      $db 	= $this->M_location->get('master_location l', ['l.id' => $post['id']], $join, null, ['name' => 'asc'], null, null, null, 'l.id, l.name, e.id as entity_id, e.code as entity_code, e.name as entity_name');
 			if ($db) {
 					$status = true;
 					$data 	= $db[0];
@@ -177,7 +177,7 @@ class Location extends Management_Controller {
   function ajax_get_location(){
     $data   = [];
     $like   = [];
-    $where  = ['l.deleted_at' => null];
+    $where  = ['l.deleted_at' => null, 'e.flag_active' => 1];
     $param  = $this->input->post('param');
 
     if($param){
@@ -192,7 +192,7 @@ class Location extends Management_Controller {
 
     // join dengan tabel entity
     $join = ['master_entity e' => 'e.id = l.entity_id AND e.deleted_at IS NULL'];
-    $db   = $this->M_location->get('master_location l', $where, $join, 'left', ['l.name' => 'asc'], 100, null, $like, "l.id, l.name, e.code as entity_code");
+    $db   = $this->M_location->get('master_location l', $where, $join, null, ['l.name' => 'asc'], 100, null, $like, "l.id, l.name, e.code as entity_code");
     foreach($db as $i => $v){
       $data[] = ['id' => $v->id, 'text' => '('.$v->entity_code.') '.$v->name];
     }
