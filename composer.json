@@ -1,0 +1,10 @@
+{
+	"description": "NotoAssets",
+	"name": "diazinmotion/invsys",
+	"type": "project",
+	"require": {
+		"php": ">=5.3.7",
+		"nesbot/carbon": "^1",
+		"codeigniter/framework": "3.1.11"
+	}
+}

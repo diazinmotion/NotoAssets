@@ -1,0 +1,76 @@
+.box-antrian{
+    font-size: 100px;
+    width: 210px;
+    border-radius: 100%;
+    margin: 0 auto;    
+    /* background: #807c7c;
+     */
+    background-image: radial-gradient(circle, #1b1a1a, black, white);
+    padding: 20px;
+    border-top: 0;
+    color: rgb(255, 255, 255);}
+
+.video-box{
+    margin: 20px 20px 0 20px;
+}
+.btn-cetak{
+    height: 100px;
+    font-size: 32px;
+    width: 50%;
+    background-color: gray;
+    border-color: gray; 
+    margin: 0 auto;
+}
+.border-box{
+    margin-top: 20px;
+    margin-left: 20px;
+    border-style: solid;
+    background-color: #fffb0b;
+    border: solid red;
+    -webkit-box-shadow: 3px 5px 10px 7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 5px 10px 7px rgba(0,0,0,0.75);
+    box-shadow: 3px 5px 10px 7px rgba(0,0,0,0.75);
+}
+.antrian-center{
+    text-align: center;
+}
+.nourut{
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.btn-antrian{
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    background-color: #538fbe;
+    /* padding: 20px 70px; */
+    font-size: 22px;
+    border: 1px solid #2d6898;
+    background-image: linear-gradient(bottom,rgb(80, 80, 81) 0%, rgb(134, 133, 133) 100%);
+    background-image: -o-linear-gradient(bottom,rgb(80, 80, 81) 0%, rgb(134, 133, 133) 100%);
+    background-image: -moz-linear-gradient(bottom,rgb(80, 80, 81) 0%, rgb(134, 133, 133) 100%);
+    background-image: -webkit-linear-gradient(bottom,rgb(80, 80, 81) 0%, rgb(134, 133, 133) 100%);
+    background-image: -ms-linear-gradient(bottom,rgb(80, 80, 81) 0%, rgb(134, 133, 133) 100%);
+ 
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0,rgb(80, 80, 81))), 
+        color-stop(1,rgb(134, 133, 133))
+    );
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    text-shadow: 0px -1px 0px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    -moz-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+}
+
+
+/* .btn-antrian:hover {
+    background-color: rgb(255, 255, 255);
+} */
