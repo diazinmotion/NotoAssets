@@ -144,9 +144,8 @@ class Model extends Management_Controller {
 
 		if ($this->form_validation->run()) {
 			$post = $this->input->post();
-      $join = ['master_entity e' => 'e.id = l.entity_id AND e.deleted_at IS NULL'];
-      
-      $db 	= $this->M_model->get('master_model l', ['l.id' => $post['id']], $join, 'left', ['name' => 'asc'], null, null, null, 'l.id, l.name, e.id as entity_id, e.code as entity_code, e.name as entity_name');
+      $join = ['master_brand e' => 'e.id = l.brand_id AND e.deleted_at IS NULL'];      
+      $db 	= $this->M_model->get('master_model l', ['l.id' => $post['id']], $join, 'left', ['name' => 'asc'], null, null, null, "l.id, l.name, e.name as brand_name");
 			if ($db) {
 					$status = true;
 					$data 	= $db[0];
