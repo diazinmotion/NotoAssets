@@ -37,6 +37,7 @@ class Auth extends Landing_Controller {
 							'id'							=> $db->id,
 							'email'						=> $db->email,
 							'full_name'				=> $db->full_name,
+							'last_login'			=> $db->last_login,
 							'is_super_admin'	=> ($db->flag_super_admin == 1) ? true : false,
 						];
 						

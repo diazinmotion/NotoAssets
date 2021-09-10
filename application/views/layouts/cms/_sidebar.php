@@ -1,5 +1,18 @@
 <aside class="main-sidebar">
   <section class="sidebar">
+    <div class="row">
+      <div class="col-lg-12" style="padding: 10px 20px;">
+        <div class="row">
+          <div class="col-lg-2" style="margin-top:5px">
+            <i class="fa fa-user-circle fa-fw fa-2x" style="color:white"></i>
+          </div>
+          <div class="col-lg-10">
+            <b style="color:white"><?= current_user_session('full_name') ?></b>
+            <small class="clearfix" style="color:white">Last Login: <?= \Carbon\Carbon::parse(current_user_session('last_login'))->format('d M Y - H:i') ?></small>
+          </div>
+        </div>
+      </div>
+    </div>
     <ul class="sidebar-menu" data-widget="tree">
       <li class="header">MAIN NAVIGATION</li>
       <li>
@@ -19,10 +32,17 @@
           <li><a href="#"><i class="fa fa-circle-o"></i> General Assets</a></li>
         </ul>
       </li>
-      <li>
-        <a href="<?= base_url() ?>">
-          <i class="fa fa-key"></i> <span>Licenses</span>
+      <li class="treeview">
+        <a href="#">
+          <i class="fa fa-key"></i> <span>License</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
         </a>
+        <ul class="treeview-menu">
+          <li><a href="<?= base_url('license') ?>"><i class="fa fa-circle-o"></i> Manage License</a></li>
+          <li><a href="<?= base_url('license') ?>"><i class="fa fa-circle-o"></i> License Seat</a></li>
+        </ul>
       </li>
       <li class="treeview">
         <a href="#">

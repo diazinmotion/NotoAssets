@@ -12,7 +12,7 @@ class M_auth extends MY_Model {
 	}
 
 	function get_login($email = null){
-		$this->db->select('id, email, password, full_name, flag_super_admin, flag_allowed');
+		$this->db->select('id, email, password, full_name, flag_super_admin, flag_allowed, last_login');
 		$this->db->where([
 			'email' 				=> $email,
 			'deleted_at'		=> null,

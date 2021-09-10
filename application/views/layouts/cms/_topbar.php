@@ -12,10 +12,9 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <li class="user user-menu">
-            <a href="javascript:void(0)"><i class="fa fa-user-circle fa-fw"></i><span class="hidden-xs"><?= $this->session->userdata(APP_SESSION_NAME)['full_name'] ?></span></a>
-          </li>
-          <li class="user user-menu">
-            <a href="<?= base_url('logout') ?>" title="Logout"><i class="fa fa-sign-out fa-fw"></i></a>
+            <a href="<?= base_url('logout') ?>" title="Logout">
+              <i class="fa fa-sign-out fa-fw"></i>
+            </a>
           </li>
         </ul>
       </div>

@@ -131,8 +131,8 @@ class Laptop extends Management_Controller {
     // set heading
     $this->table->set_heading(
       ['data' => 'Software Name', 'class' => 'bg-primary', 'style' => 'width:50%'],
-      ['data' => 'License', 'class' => 'bg-primary', 'style' => 'width:40%'],
-      ['data' => 'Actions', 'class' => 'bg-primary text-center', 'style' => 'width:10%']
+      ['data' => 'License', 'class' => 'bg-primary', 'style' => 'width:30%'],
+      ['data' => 'Actions', 'class' => 'bg-primary text-center', 'style' => 'width:15%']
     );
 
     // TODO: DAPATKAN DATA SOFTWARE PADA ASET INI
@@ -149,12 +149,16 @@ class Laptop extends Management_Controller {
       $uid = (! is_numeric($i)) ? 'uid' : $i;
 
       $f_software = form_dropdown('software_id['.$uid.']', [], null, 'class=software_id');
+      $f_license  = form_dropdown('license_id['.$uid.']', [], null, 'class=license_id');
+      $f_edit     = '<a href="javascript:void(0)" class="btn btn-xs btn-primary btn-software-edit"><i class="fa fa-edit fa-fw"></i></a>';
       $f_delete   = '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-software-delete"><i class="fa fa-trash fa-fw"></i></a>';
+
+      $action = implode(' ', [$f_edit, $f_delete]);
 
       $this->table->add_row(
         ['data' => $f_software],
-        ['data' => '<small class="clearfix">Expired On: 22 Feb 2021</small>'],
-        ['data' => $f_delete, 'class' => 'text-center']
+        ['data' => $f_license.'<small class="clearfix">Expired On: 22 Feb 2021</small>'],
+        ['data' => $action, 'class' => 'text-center']
       );
     }
 
