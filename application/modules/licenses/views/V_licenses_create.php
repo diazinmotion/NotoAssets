@@ -4,7 +4,7 @@
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs pull-right">
           <? if($id) { ?>
-          <li><a href="#software" data-toggle="tab">Seats</a></li>
+          <li><a href="#software" data-toggle="tab">Seats <?= ($db) ? '<span class="meta-installed badge">'.$db[0]->installed_device.'</span>' : null ?></a></li>
           <? } ?>
           <li class="active"><a href="#details" data-toggle="tab">Details</a></li>
           <li class="pull-left header">
@@ -131,7 +131,7 @@
               </div>
               <div class="col-lg-4 text-right">
                 <small class="text-primary">Installed:</small>
-                <h4 class="text-bold" style="margin:0"><?= (($db) ? '<span id="meta-installed">'.$db[0]->installed_device.'</span> / '.(($db[0]->quota == 0) ? 'Unlimited' : $db[0]->quota) : null) ?></h4>
+                <h4 class="text-bold" style="margin:0"><?= (($db) ? '<span class="meta-installed">'.$db[0]->installed_device.'</span> / '.(($db[0]->quota == 0) ? 'Unlimited' : $db[0]->quota) : null) ?></h4>
               </div>
               <div class="col-lg-12">
                 <?= $t_seats ?>

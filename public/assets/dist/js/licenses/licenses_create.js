@@ -10,7 +10,7 @@ $(document).on('click', '.btn-submit', function(){
 $(document).on('click', '.btn-seat-delete', function(){
   var data_id       = $(this).data('id');
   var index         = $('.btn-license-delete').index(this);
-  var cur_installed = parseInt($('#meta-installed').text());
+  var cur_installed = parseInt($('.meta-installed').text());
 
   Swal.fire({
       title: "Are you sure for this action?",
@@ -34,7 +34,7 @@ $(document).on('click', '.btn-seat-delete', function(){
           $('#table-seats').find('tr').eq(index).remove();
           cur_installed--;
 
-          $('#meta-installed').text(cur_installed);
+          $('.meta-installed').text(cur_installed);
         } else {
           Swal.fire({
             icon: 'error',
