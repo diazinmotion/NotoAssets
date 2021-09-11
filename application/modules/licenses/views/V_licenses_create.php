@@ -23,6 +23,18 @@
                 <p>
                   This section list all details for this license for this particular software. 
                 </p>
+                <? if($db){ ?>
+                <small>
+                  <ul class="list-unstyled">    
+                    <? if($db[0]->created_name){ ?>
+                      <li><b>Created:</b> <?= $db[0]->created_name ?> at <?= \Carbon\Carbon::parse($db[0]->created_at)->format('d M Y H:i') ?></li>
+                    <? } ?>
+                    <? if($db[0]->updated_name){ ?>
+                      <li><b>Updated:</b> <?= $db[0]->updated_name ?> at <?= \Carbon\Carbon::parse($db[0]->updated_at)->format('d M Y H:i') ?></li>
+                    <? } ?>
+                  </ul>
+                </small>
+                <? } ?>
               </div>
               <div class="col-lg-8">
                 <? if($id && ($db && $db[0]->universal_expired_at && \Carbon\Carbon::now() > \Carbon\Carbon::parse($db[0]->universal_expired_at))) { ?>
@@ -109,37 +121,20 @@
           </div>
           <div class="tab-pane" id="software">
             <div class="row">
-              <div class="col-lg-4">
-                <h4 class="text-bold text-primary">Software &amp; Licenses</h4>
+              <div class="col-lg-12">
+                <h4 class="text-bold text-primary">Seats</h4>
                 <hr>
-                <b>HOW TO USE:</b>
-                <p>
-                  This section list all software that installed on this assets. This also including their licenses for each software, any software with no any licenses might be a freeware. 
-                  Any licenses without expiration date mean it valid for lifetime (one time payment), otherwise it marked as subscription.
-                </p>
               </div>
               <div class="col-lg-8">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <b>SOFTWARE PACKAGES</b>
-                    <p>You can choose multiple software at once using software packages that have already been definded. Want to define new software packages? <a href="<?= base_url('master/software_package') ?>" target="_blank" rel="noopener noreferrer">Create a new one here</a>.</p>
-                    <div class="form-group row">
-                      <div class="col-lg-10">
-                        <select class='software_package_id'></select>
-                      </div>
-                      <div class="col-lg-2">
-                        <a href="javascript:void(0)" class="btn btn-sm btn-block btn-primary btn-package-apply">Apply</a>
-                      </div>
-                    </div>
-                    <hr>
-                  </div>
-                  <div class="col-lg-12">
-                    <?= $t_software ?>
-                  </div>
-                  <div class="col-lg-12 text-right">
-                    <a href="javascript:void(0)" class="btn btn-primary btn-xs btn-software-add">Add Software</a>
-                  </div>
-                </div>
+                <b>HOW TO USE:</b>
+                <p>This section lists all the assets that currently using this current license.</p>
+              </div>
+              <div class="col-lg-4 text-right">
+                <small class="text-primary">Installed:</small>
+                <h4 class="text-bold" style="margin:0"><?= (($db) ? '<span id="meta-installed">'.$db[0]->installed_device.'</span> / '.(($db[0]->quota == 0) ? 'Unlimited' : $db[0]->quota) : null) ?></h4>
+              </div>
+              <div class="col-lg-12">
+                <?= $t_seats ?>
               </div>
             </div>
           </div>

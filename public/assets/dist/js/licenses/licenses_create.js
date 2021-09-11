@@ -7,26 +7,53 @@ $(document).on('click', '.btn-submit', function(){
   $('.main-form').submit();
 });
 
-$(document).on('click', '.btn-software-add', function(){
-  var new_row     = html_software_table.html();
+$(document).on('click', '.btn-seat-delete', function(){
+  var data_id       = $(this).data('id');
+  var index         = $('.btn-license-delete').index(this);
+  var cur_installed = parseInt($('#meta-installed').text());
 
-  new_id          = 'new_' + _make_id(3);
-  html_table_new  = new_row.replace(/uid/g, new_id);
+  Swal.fire({
+      title: "Are you sure for this action?",
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+  }).then((r) => {
+    if(r.isConfirmed) {
+      $.post(module_url + '/ajax_delete_seat', { id: data_id }, function (d) {
+        if (d.status) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'The item has been deleted.',
+            showConfirmButton: true,
+            timer: 3000
+          });
+          
+          // delete table
+          $('#table-seats').find('tr').eq(index).remove();
+          cur_installed--;
 
-  $('#table-software').append(`<tr>${html_table_new}</tr>`);
-  _reInitialize();
-});
-
-$(document).on('click', '.btn-software-delete', function(){
-  var index = $('.btn-software-delete').index(this);
-  $('#table-software').find('tr').eq(index).remove();
-
-  selected_software = [];
-  $.each($('.software_id'), function(){
-    // tambahkan software2 yang telah dipilih
-    selected_software.push($(this).val());
+          $('#meta-installed').text(cur_installed);
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Cant delete this item at this moment.',
+            showConfirmButton: true,
+            timer: 3000
+          });
+        }
+      });
+    }
   });
 });
+
+function _check_seat_table(){
+  if($('#table-seats > tr').length == 0){
+    $('#table-seats').html('<tr><td colspan="5"><center>This license has not been installed on any assets.</center></td></tr>');
+  }
+}
 
 function _show_popup(){
   // hanya tampilkan pesan apabila telah di save
