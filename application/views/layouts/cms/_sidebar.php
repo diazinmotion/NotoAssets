@@ -40,8 +40,7 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="<?= base_url('license') ?>"><i class="fa fa-circle-o"></i> Manage License</a></li>
-          <li><a href="<?= base_url('license') ?>"><i class="fa fa-circle-o"></i> License Seat</a></li>
+          <li><a href="<?= base_url('licenses') ?>"><i class="fa fa-circle-o"></i> Manage License</a></li>
         </ul>
       </li>
       <li class="treeview">

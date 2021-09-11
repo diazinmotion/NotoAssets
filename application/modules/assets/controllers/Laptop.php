@@ -106,7 +106,7 @@ class Laptop extends Management_Controller {
           $db = $this->M_laptop->update(null, ['id' => $id], $data);
         }
       } else {
-        $msg = str_replace(['<p>', '</p>'], [null, '<br/>'], validation_errors());
+        $msg[] = str_replace(['<p>', '</p>'], [null, '<br/>'], validation_errors());
       }
     }
 

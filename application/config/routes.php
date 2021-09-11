@@ -6,7 +6,6 @@ $route['404_override']          = '';
 $route['translate_uri_dashes']  = FALSE;
 
 // APP SPECIFIC ROUTES
-$route['logout']                = 'auth/logout';
-$route['kiosk/(:any)/(:any)']   = 'kiosk/index/$1/$2';
-$route['register/(:any)']       = 'kiosk/register/$1';
-$route['display/(:any)/(:num)'] = 'display/index/$1/$2';
+$route['logout']                    = 'auth/logout';
+$route['assets/laptop/edit/(:any)'] = 'assets/laptop/create/$1';
+$route['licenses/edit/(:any)']      = 'licenses/create/$1';
