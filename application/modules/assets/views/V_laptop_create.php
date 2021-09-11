@@ -13,7 +13,8 @@
               <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="text-red"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
             </ul>
           </li>
-          <li><a href="#maintenance" data-toggle="tab">Maintenances</a></li>
+          <li><a href="#history" data-toggle="tab">History</a></li>
+          <li><a href="#todo" data-toggle="tab">ToDo</a></li>
           <? } ?>
           <li><a href="#software" data-toggle="tab">Software &amp; Licenses</a></li>
           <li class="active"><a href="#details" data-toggle="tab">Details</a></li>
@@ -275,8 +276,11 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane" id="maintenance">
-            TBA
+          <div class="tab-pane" id="todo">
+            TODO
+          </div>
+          <div class="tab-pane" id="history">
+            MAINTENANCE HISTORY / ASSIGNMENT TO USER HISTORY
           </div>
         </div>
         <div class="panel-footer">
