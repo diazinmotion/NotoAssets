@@ -55,7 +55,7 @@
           <div class="col-lg-12"><hr></div>
           <div class="col-lg-12">
             <!-- MAIN TABLE -->
-            <table id="table-content" class="table table-bordered table-hover">
+            <table data-toggle="table" id="table-content" class="table table-bordered table-hover">
               <thead>
                 <tr>
                   <th class="bg-primary">Entity & Location</th>

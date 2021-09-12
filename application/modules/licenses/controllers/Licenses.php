@@ -327,7 +327,7 @@ class Licenses extends Management_Controller {
   function ajax_get_licenses(){
     $data   = [];
     $like   = [];
-    $where  = ['deleted_at' => null];
+    $id     = $this->input->post('id');
     $param  = $this->input->post('param');
 
     if($param){
@@ -336,9 +336,44 @@ class Licenses extends Management_Controller {
       ];
     }
 
-    $db = $this->M_license->get(null, $where, null, null, ['name' => 'asc'], 100, null, $like, "id, name");
+    $select = '
+      l.*, 
+      s.name as software_name, 
+      uc.full_name as created_name, 
+      uu.full_name as updated_name,
+      (select count(id) from license_seat ls where ls.license_id = l.id) as installed_device
+    ';
+    $join   = [
+      'master_software s' => 's.id = l.software_id',
+      'users uc'          => 'uc.id = l.created_by',
+      'users uu'          => 'uu.id = l.updated_by'
+    ];
+
+    $db = $this->M_license->get('license l', ['l.software_id' => $id], $join, 'left', null, null, null, $like, $select);
     foreach($db as $i => $v){
-      $data[] = ['id' => $v->id, 'text' => $v->name];
+      $data_extra = $v;
+      $s_name     = $v->name;
+
+      // apakah ada kuota
+      if($v->quota != 0){
+        $s_name .= ' / '.($v->quota - $v->installed_device).' available';
+      }
+
+      // apakah ada waktu expired nya?
+      // bila sudah expired jangan ditampilkan
+      if($v->flag_permanent == 0 && (Carbon::now() > Carbon::parse($v->universal_expired_at))){
+        continue;
+      }
+
+      if($v->universal_expired_at){
+        $data_extra->universal_expired_at = Carbon::parse($v->universal_expired_at)->format('d-m-Y');
+      }
+      
+      $data[] = [
+        'id'    => $v->id, 
+        'text'  => $s_name,
+        'extra' => $data_extra
+      ];
     }
 
     $this->output->set_content_type('application/json')->set_output(json_encode($data));

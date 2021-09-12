@@ -242,16 +242,16 @@
           </div>
           <div class="tab-pane" id="software">
             <div class="row">
-              <div class="col-lg-4">
+              <div class="col-lg-12">
                 <h4 class="text-bold text-primary">Software &amp; Licenses</h4>
-                <hr>
                 <b>HOW TO USE:</b>
                 <p>
                   This section list all software that installed on this assets. This also including their licenses for each software, any software with no any licenses might be a freeware. 
                   Any licenses without expiration date mean it valid for lifetime (one time payment), otherwise it marked as subscription.
                 </p>
+                <hr>
               </div>
-              <div class="col-lg-8">
+              <div class="col-lg-12">
                 <div class="row">
                   <div class="col-lg-12">
                     <b>SOFTWARE PACKAGES</b>

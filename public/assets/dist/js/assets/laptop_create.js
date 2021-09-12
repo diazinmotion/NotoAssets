@@ -119,7 +119,7 @@ function _reInitialize(){
     width:'100%'
   });
 
-  $('.dtp').datepicker({
+  $('.dtp, .software_expired_at').datepicker({
     autoclose: true,
     todayHighlight: true,
     format: 'dd-mm-yyyy'
@@ -399,6 +399,73 @@ function _reInitialize(){
     $.each($('.software_id'), function(){
       // tambahkan software2 yang telah dipilih
       selected_software.push($(this).val());
+    });
+  });
+
+  $.each($('.license_id'), function(){
+    var index = $('.license_id').index(this);
+
+    $(this).select2({
+      tags: false,
+      width: '100%',
+      placeholder: 'Search a license',
+      ajax: {
+        url: base_url + 'licenses/ajax_get_licenses',
+        dataType: 'json',
+        type: "POST",
+        data: function (params) {
+          var queryParameters = {
+            param: params.term,
+            id: $('.software_id').eq(index).val()
+          }
+  
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: $.map(data, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+                extra: item.extra
+              }
+            })
+          };
+        }
+      }
+    }).on('select2:select', function(){
+      var data = $(this).select2('data')[0].extra;
+
+      if(data !== undefined){
+        var prop_exp  = true;
+        var prop_key  = true;
+        var val_exp   = '';
+        var val_key   = '';
+
+        // bila bulk license, maka disable semua isian untuk baris ini
+        if(data.is_bulk_license == 1){
+          prop_exp = true;
+          prop_key = true;
+          val_exp   = data.universal_expired_at;
+          val_key   = data.universal_product_key;
+        
+          $('.software_expired_at').eq(index).datepicker('destroy');
+        }else{
+          prop_exp = false;
+          prop_key = false;
+          val_exp   = '';
+          val_key   = '';
+        
+          $('.software_expired_at').eq(index).datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd-mm-yyyy'
+          });
+        }
+
+        $('.software_expired_at').eq(index).val(val_exp).prop('readonly', prop_exp);
+        $('.software_product_key').eq(index).val(val_key).prop('readonly', prop_key);
+      }
     });
   });
 }

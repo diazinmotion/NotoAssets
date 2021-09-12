@@ -11,7 +11,7 @@
 						<img src="<?= base_url('assets/image/logo.png') ?>" alt="App Logo" height="70">
 					</a>
 				</h4>
-				<h4 class="login-box-msg text-bold text-danger" style="padding:20px 0;">
+				<h4 class="login-box-msg text-bold text-primary" style="padding:20px 0;">
 					<?php echo APP_NAME ?>
 				</h4>
 				<hr style="margin-top:0px;">
@@ -37,7 +37,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-12">
-							<button type="submit" class="btn btn-danger btn-block">Sign In</button>
+							<button type="submit" class="btn btn-primary btn-block">Sign In</button>
 						</div>
 					</div>
 				</form>
