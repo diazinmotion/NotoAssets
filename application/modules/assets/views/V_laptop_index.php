@@ -55,18 +55,20 @@
           <div class="col-lg-12"><hr></div>
           <div class="col-lg-12">
             <!-- MAIN TABLE -->
-            <table data-toggle="table" id="table-content" class="table table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th class="bg-primary">Entity & Location</th>
-                  <th class="bg-primary">Laptop Name</th>
-                  <th class="bg-primary">Software</th>
-                  <th class="bg-primary">Hardware</th>
-                  <th class="bg-primary">Status</th>
-                  <th class="bg-primary text-center" style="width:10%">Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
+            <table id="table-content" class="table table-bordered table-hover"
+              data-search="true"
+              data-show-refresh="true"
+              data-show-columns="true"
+              data-show-columns-toggle-all="true"
+              data-show-export="true"
+              data-click-to-select="true"
+              data-show-pagination-switch="true"
+              data-pagination="true"
+              data-id-field="id"
+              data-page-list="[10, 25, 50, 100, all]"
+              data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data"
+              data-response-handler="responseHandler"
+            >
             </table>
             <!-- MAIN TABLE -->
           </div>

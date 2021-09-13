@@ -22,7 +22,7 @@ class Laptop extends Management_Controller {
   public function index(){
     $data['extraJs'] 	= [
       'statics/app_common.js',
-      'asstes/laptop_index.js'
+      'assets/laptop_index.js'
     ];
     $data['page_title'] = "Laptop Assets";
     $data['page_view'] 	= "V_laptop_index";
@@ -35,12 +35,12 @@ class Laptop extends Management_Controller {
     // inputan POST
     $post = $this->input->post();
 
-    // if($id){
-    //   $id = base64_decode($id);
-    //   if(! is_numeric((int) base64_decode($id))){
-    //     show_404();
-    //   }
-    // }
+    if($id){
+      $id = base64_decode($id);
+      if(! is_numeric((int) base64_decode($id))){
+        show_404();
+      }
+    }
 
     if($post){
       $data           = [];
