@@ -4,7 +4,7 @@ use Carbon\Carbon;
 
 class Laptop extends Management_Controller {
 
-  private $module_path 		= 'asstes/laptop';
+  private $module_path 		= 'assets/laptop';
 	private $laptop_status	= [
 		0 => 'DECOMISSIONED',
 		1 => 'NORMAL',
@@ -240,37 +240,72 @@ class Laptop extends Management_Controller {
     // related to datatable
 
     // hanya dapatkan data yang belum dihapus
-    $where = ['deleted_at' => null];
+    $where = ['e.flag_active' => '1'];
 
     // bila ada filter
     if($filter_post){
       if(isset($filter_post['keyword'])){
         $like += [
-          'lower(name)' => strtolower($filter_post['keyword']),
+          'lower(l.name)' => strtolower($filter_post['keyword']),
         ];
       }
     }
 
-    $db_total = $this->M_laptop->get_count(null, $where, null, null, null, null, null, $like, 'id');
-    $db_data 	= $this->M_laptop->get(null, $where, null, null, ['name' => 'asc'], $limit, $offset, $like, 'id, name');
+    $select = '
+      l.*,
+      e.name as entity_name,
+      lo.name as location_name,
+      o.name as os_name,
+      s.name as storage_name,
+      s.code as storage_code,
+      m.name as memory_name,
+      m.code as memory_code,
+      a.name as account_name,
+      mo.name as model_name
+    ';
+
+    $join = [
+      'master_entity e'     => 'e.id = l.entity_id',
+      'master_location lo'  => 'lo.id = l.location_id',
+      'master_os o'         => 'o.id = l.os_type_id',
+      'master_storage s'    => 's.id = l.storage_type_id',
+      'master_memory m'     => 'm.id = l.memory_type_id',
+      'master_account a'    => 'a.id = l.account_type_id',
+      'master_model mo'     => 'mo.id = l.model_id',
+    ];
+
+    $db_total = $this->M_laptop->get_count('laptop l', $where, $join, 'left', null, null, null, $like, 'l.id');
+    $db_data 	= $this->M_laptop->get('laptop l', $where, $join, 'left', ['e.name, mo.name, l.name' => 'asc'], $limit, $offset, $like, $select);
     foreach($db_data as $i => $v) {
 
       $action = [
-          '<a href="javascript:void(0)" class="btn btn-xs btn-primary btn-item-edit" data-id="' . $v->id . '"><i class="fa fa-edit"></i></a>',
-          '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-item-delete" data-id="' . $v->id . '"><i class="fa fa-trash"></i></a>',
+          '<a href="javascript:void(0)" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i></a>',
+          '<a href="javascript:void(0)" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>',
       ];
       
       $table_content[] = [
-        'name'    => $v->name,
-        'action'	=> '<center><div class="btn-group">'.implode('', $action).'</div></center>',
+        'id'            => $v->id,
+        'entity'        => $v->entity_name,
+        'location'      => $v->location_name,
+        'code'          => $v->code,
+        'model'         => $v->model_name,
+        'name'          => $v->name,
+        'sn'            => $v->serial_number,
+        'os'            => $v->os_name,
+        'os_key'        => $v->os_product_key,
+        'storage_type'  => $v->storage_code,
+        'storage_size'  => $v->storage_size,
+        'memory_type'   => $v->memory_code,
+        'memory_size'   => $v->memory_size,
+        'status'        => $v->flag_status,
+        'action'	      => '<center><div class="btn-group">'.implode('', $action).'</div></center>',
       ];
     }
 
     $result = [
-      "draw" 						=> $draw,
-      "recordsTotal" 		=> ($db_total) ? $db_total->total : 0,
-      "recordsFiltered" => ($db_total) ? $db_total->total : 0,
-      "data" 						=> $table_content,
+      "total" 						=> ($db_total) ? $db_total->total : 0,
+      "totalNotFiltered" 	=> ($db_total) ? $db_total->total : 0,
+      "rows"              => $table_content,
     ];
 
     $this->output->set_content_type('application/json')->set_output(json_encode($result));

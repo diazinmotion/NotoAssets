@@ -66,7 +66,7 @@
               data-pagination="true"
               data-id-field="id"
               data-page-list="[10, 25, 50, 100, all]"
-              data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data"
+              data-url="<?= $module_url.'/ajax_module_index' ?>"
               data-response-handler="responseHandler"
             >
             </table>

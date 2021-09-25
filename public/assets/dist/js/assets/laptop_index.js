@@ -9,75 +9,89 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
     }, 
     {
       title: 'Entity',
-      field: 'id',
+      field: 'entity',
       valign: 'middle',
       sortable: true,
     }, 
     {
       title: 'Location',
-      field: 'id',
+      field: 'location',
       valign: 'middle',
       sortable: true,
     }, 
     {
       title: 'Barcode',
-      field: 'id',
+      field: 'code',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Laptop Name',
-      field: 'id',
+      field: 'name',
       valign: 'middle',
       sortable: true,
     }, 
     {
+      title: 'Model',
+      field: 'model',
+      valign: 'middle',
+      align: 'center',
+      sortable: true,
+    }, 
+    {
       title: 'Serial Number',
-      field: 'id',
+      field: 'sn',
       valign: 'middle',
       sortable: true,
     }, 
     {
       title: 'Operating System',
-      field: 'id',
+      field: 'os',
       valign: 'middle',
       sortable: true,
     }, 
     {
       title: 'OS Product Key',
-      field: 'id',
+      field: 'os_key',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Storage Type',
-      field: 'id',
+      field: 'storage_type',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Storage Size (GB)',
-      field: 'id',
+      field: 'storage_size',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Memory Type',
-      field: 'id',
+      field: 'memory_type',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Memory Size (GB)',
-      field: 'id',
+      field: 'memory_type',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Status',
-      field: 'id',
+      field: 'status',
       valign: 'middle',
       sortable: true,
+    },
+    {
+      title: 'Action',
+      field: 'action',
+      valign: 'middle',
+      align: 'center',
+      sortable: false,
     },
   ]
 });
@@ -85,7 +99,7 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
 function responseHandler(res) {
   $.each(res.rows, function (i, row) {
     // row.state = $.inArray(row.id, selections) !== -1
-    row.state = row.id
+    row.state = row.code
   })
   return res
 }
