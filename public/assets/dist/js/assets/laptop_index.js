@@ -22,6 +22,7 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
     {
       title: 'Barcode',
       field: 'code',
+      align: 'center',
       valign: 'middle',
       sortable: true,
     },
@@ -48,6 +49,7 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       title: 'Operating System',
       field: 'os',
       valign: 'middle',
+      align: 'center',
       sortable: true,
     }, 
     {
@@ -59,30 +61,35 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
     {
       title: 'Storage Type',
       field: 'storage_type',
+      align: 'center',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Storage Size (GB)',
       field: 'storage_size',
+      align: 'right',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Memory Type',
       field: 'memory_type',
+      align: 'center',
       valign: 'middle',
       sortable: true,
     },
     {
       title: 'Memory Size (GB)',
-      field: 'memory_type',
+      field: 'memory_size',
       valign: 'middle',
+      align: 'right',
       sortable: true,
     },
     {
       title: 'Status',
       field: 'status',
+      align: 'center',
       valign: 'middle',
       sortable: true,
     },
