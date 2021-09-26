@@ -20,7 +20,7 @@
           <li class="active"><a href="#details" data-toggle="tab">Details</a></li>
           <li class="pull-left header">
             <b class="text-bold text-primary">
-              <i class="fa fa-plus-circle fa-fw"></i> <?= $page_title ?>
+              <i class="fa fa-<?= ($id) ? 'edit' : 'plus-circle' ?> fa-fw"></i> <?= $page_title ?>
             </b>
           </li>
         </ul>
@@ -35,19 +35,40 @@
                   This section list all details for this asset. 
                   Please fill these form as complete as possible to input laptop assets.
                 </p>
+                <? if($db){ ?>
+                <small>
+                  <ul class="list-unstyled">    
+                    <? if($db[0]->created_name){ ?>
+                      <li><b>Created:</b> <?= $db[0]->created_name ?> at <?= \Carbon\Carbon::parse($db[0]->created_at)->format('d M Y H:i') ?></li>
+                    <? } ?>
+                    <? if($db[0]->updated_name){ ?>
+                      <li><b>Updated:</b> <?= $db[0]->updated_name ?> at <?= \Carbon\Carbon::parse($db[0]->updated_at)->format('d M Y H:i') ?></li>
+                    <? } ?>
+                  </ul>
+                </small>
+                <? } ?>
               </div>
               <div class="col-lg-8">
+                <? if($id && ($db && $db[0]->warranty_expired && \Carbon\Carbon::now() > \Carbon\Carbon::parse($db[0]->warranty_expired))) { ?>
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="callout callout-warning">
-                      <p>This warranty of this assets soon or already expired, please review the warranty expiration below. Ignore this message if you don't want to extend the asset's warranty.</p>
+                      <p>This warranty of this assets already expired, please review the warranty expiration below. Ignore this message if you don't want to extend the asset's warranty.</p>
                     </div>
                   </div>
                 </div>
+                <? } ?>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Entity</label>
                   <div class="col-lg-9">
-                    <select name="entity_id" class='entity_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->entity_id => $db[0]->entity_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('entity_id', $opt, ($db) ? $db[0]->entity_id : null, 'class="entity_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/entity') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -56,7 +77,14 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Location</label>
                   <div class="col-sm-9">
-                    <select name="location_id" class='location_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->location_id => $db[0]->location_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('location_id', $opt, ($db) ? $db[0]->location_id : null, 'class="location_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/location') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -66,13 +94,20 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Tag / Barcode</label>
                   <div class="col-sm-9">
-                    <input type="text" name="code" class="form-control" placeholder="Input data">
+                    <input type="text" name="code" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->code : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Model</label>
                   <div class="col-sm-9">
-                    <select name="model_id" class='model_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->model_id => $db[0]->brand_name.' '.$db[0]->model_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('model_id', $opt, ($db) ? $db[0]->location_id : null, 'class="model_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/model') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -81,13 +116,13 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Assets Name</label>
                   <div class="col-sm-9">
-                    <input type="text" name="name" class="form-control" placeholder="Input data">
+                    <input type="text" name="name" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->name : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Serial Number</label>
                   <div class="col-sm-9">
-                    <input type="text" name="serial_number" class="form-control" placeholder="Input data">
+                    <input type="text" name="serial_number" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->serial_number : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
@@ -97,7 +132,7 @@
                       <div class="input-group-addon">
                         <i class="fa fa-calendar"></i>
                       </div>
-                      <input type="text" name="purchased_at" class="dtp-max-today form-control" placeholder="Input data">
+                      <input type="text" name="purchased_at" class="dtp-max-today form-control" placeholder="Input data" value="<?= ($db && $db[0]->purchased_at) ? \Carbon\Carbon::parse($db[0]->purchased_at)->format('d-m-Y') : null ?>">
                     </div>
                   </div>
                 </div>
@@ -108,7 +143,7 @@
                       <div class="input-group-addon">
                         <i class="fa fa-calendar"></i>
                       </div>
-                      <input type="text" name="warranty_expired" class="dtp form-control" placeholder="Input data">
+                      <input type="text" name="warranty_expired" class="dtp form-control" placeholder="Input data" value="<?= ($db && $db[0]->warranty_expired) ? \Carbon\Carbon::parse($db[0]->warranty_expired)->format('d-m-Y') : null ?>">
                     </div>
                   </div>
                 </div>
@@ -116,7 +151,14 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Operating System</label>
                   <div class="col-sm-9">
-                    <select name="os_type_id" class='os_type_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->os_type_id => $db[0]->os_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('os_type_id', $opt, ($db) ? $db[0]->os_type_id : null, 'class="os_type_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/os_type') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -125,14 +167,21 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">OS Product Key</label>
                   <div class="col-sm-9">
-                    <input type="text" name="os_product_key" class="form-control" placeholder="Input data">
+                    <input type="text" name="os_product_key" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->os_product_key : null ?>">
                   </div>
                 </div>
                 <hr>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Storage Type</label>
                   <div class="col-sm-9">
-                    <select name="storage_type_id" class='storage_type_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->storage_type_id => '('.$db[0]->storage_code.') '.$db[0]->storage_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('storage_type_id', $opt, ($db) ? $db[0]->storage_type_id : null, 'class="storage_type_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/storage_type') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -141,20 +190,27 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Storage Brand</label>
                   <div class="col-sm-9">
-                    <input type="text" name="storage_type_brand" class="form-control" placeholder="Input data">
+                    <input type="text" name="storage_type_brand" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->storage_type_brand : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Storage Size (GB)</label>
                   <div class="col-sm-9">
-                    <input type="number" name="storage_size" class="form-control" placeholder="Input data">
+                    <input type="number" name="storage_size" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->storage_size : null ?>">
                   </div>
                 </div>
                 <hr>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Memory Type</label>
                   <div class="col-sm-9">
-                    <select name="memory_type_id" class='memory_type_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->memory_type_id => '('.$db[0]->memory_code.') '.$db[0]->memory_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('memory_type_id', $opt, ($db) ? $db[0]->memory_type_id : null, 'class="memory_type_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/memory_type') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -163,20 +219,27 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Memory Brand</label>
                   <div class="col-sm-9">
-                    <input type="text" name="memory_brand" class="form-control" placeholder="Input data">
+                    <input type="text" name="memory_brand" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->memory_brand : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Memory Size (GB)</label>
                   <div class="col-sm-9">
-                    <input type="number" name="memory_size" class="form-control" placeholder="Input data">
+                    <input type="number" name="memory_size" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->memory_size : null ?>">
                   </div>
                 </div>
                 <hr>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Account Type</label>
                   <div class="col-sm-9">
-                    <select name="account_type_id" class='account_type_id'></select>
+                    <? 
+                      if($db){
+                        $opt = [$db[0]->account_type_id => $db[0]->account_name];
+                      }else{
+                        $opt = [];
+                      } 
+                    ?>
+                    <?= form_dropdown('account_type_id', $opt, ($db) ? $db[0]->account_type_id : null, 'class="account_type_id"') ?>
                   </div>
                   <div class="col-lg-12 text-right">
                     <a href="<?= base_url('master/account') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
@@ -185,21 +248,21 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Account Email</label>
                   <div class="col-sm-9">
-                    <input type="email" name="account_email" class="form-control" placeholder="Input data">
+                    <input type="email" name="account_email" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->account_email : null ?>">
                   </div>
                 </div>
                 <hr>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">PKI Email</label>
                   <div class="col-sm-9">
-                    <input type="email" name="pki_email" class="form-control" placeholder="Input data">
+                    <input type="email" name="pki_email" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->pki_email : null ?>">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">PKI Password</label>
                   <div class="col-sm-9">
                     <div class="input-group">
-                      <input type="password" name="pki_password" class="form-control show-password" placeholder="Input data">
+                      <input type="password" name="pki_password" class="form-control show-password" placeholder="Input data" value="<?= ($db) ? $db[0]->pki_password : null ?>">
                       <span class="input-group-btn">
                         <button type="button" class="btn btn-primary btn-flat btn-show-password">
                           <i class="fa fa-eye-slash fa-fw"></i>
@@ -212,7 +275,7 @@
                   <label class="col-sm-3 control-label">Encryption Password</label>
                   <div class="col-sm-9">
                     <div class="input-group">
-                      <input type="password" name="encryption_password" class="form-control show-password" placeholder="Input data">
+                      <input type="password" name="encryption_password" class="form-control show-password" placeholder="Input data" value="<?= ($db) ? $db[0]->encryption_password : null ?>">
                       <span class="input-group-btn">
                         <button type="button" class="btn btn-primary btn-flat btn-show-password">
                           <i class="fa fa-eye-slash fa-fw"></i>

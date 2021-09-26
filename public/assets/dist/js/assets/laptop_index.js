@@ -1,22 +1,21 @@
 $('#table-content').bootstrapTable('destroy').bootstrapTable({
   height: 550,
+  stickyHeader: true,
+  undefinedText: '',
+  exportTypes: ['csv', 'excel', 'doc', 'txt','json', 'xml', 'pdf'],
   columns: [
-    {
-      field: 'state',
-      checkbox: true,
-      align: 'center',
-      valign: 'middle'
-    }, 
     {
       title: 'Entity',
       field: 'entity',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     }, 
     {
       title: 'Location',
       field: 'location',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     }, 
     {
@@ -24,12 +23,14 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'code',
       align: 'center',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
       title: 'Laptop Name',
       field: 'name',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     }, 
     {
@@ -37,12 +38,14 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'model',
       valign: 'middle',
       align: 'center',
+      searchable: true,
       sortable: true,
     }, 
     {
       title: 'Serial Number',
       field: 'sn',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     }, 
     {
@@ -50,12 +53,14 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'os',
       valign: 'middle',
       align: 'center',
+      searchable: true,
       sortable: true,
     }, 
     {
       title: 'OS Product Key',
       field: 'os_key',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
@@ -63,6 +68,7 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'storage_type',
       align: 'center',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
@@ -70,6 +76,7 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'storage_size',
       align: 'right',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
@@ -77,12 +84,14 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'memory_type',
       align: 'center',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
       title: 'Memory Size (GB)',
       field: 'memory_size',
       valign: 'middle',
+      searchable: true,
       align: 'right',
       sortable: true,
     },
@@ -91,13 +100,15 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       field: 'status',
       align: 'center',
       valign: 'middle',
+      searchable: true,
       sortable: true,
     },
     {
-      title: 'Action',
+      title: 'Action Item',
       field: 'action',
       valign: 'middle',
       align: 'center',
+      searchable: true,
       sortable: false,
     },
   ]

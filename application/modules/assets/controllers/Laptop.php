@@ -87,7 +87,7 @@ class Laptop extends Management_Controller {
           'memory_type_id'      => (isset($post['memory_type_id'])) ? $post['memory_type_id'] : null,
           'memory_brand'        => $post['memory_brand'],
           'memory_size'         => $post['memory_size'],
-          'account_type_id'     => (isset($post['account_type_id'])) ? : null,
+          'account_type_id'     => (isset($post['account_type_id'])) ? $post['account_type_id'] : null,
           'account_email'       => $post['account_email'],
           'flag_status'         => $post['flag_status'],
           'purchased_at'        => ($post['purchased_at']) ? format_date_to_db($post['purchased_at']) : null,
@@ -150,9 +150,50 @@ class Laptop extends Management_Controller {
     }else{
       $db = false;
 
+      if($id){
+        $select = '
+          l.*,
+          e.name as entity_name,
+          lo.name as location_name,
+          o.id as os_id,
+          o.name as os_name,
+          s.id as storage_id,
+          s.name as storage_name,
+          s.code as storage_code,
+          m.id as memory_id,
+          m.name as memory_name,
+          m.code as memory_code,
+          a.id as account_id,
+          a.name as account_name,
+          mo.id as model_id,
+          mo.name as model_name,
+          b.name as brand_name,
+          uc.full_name as created_name, 
+          uu.full_name as updated_name
+        ';
+
+        $join = [
+          'master_entity e'     => 'e.id = l.entity_id',
+          'master_location lo'  => 'lo.id = l.location_id',
+          'master_os o'         => 'o.id = l.os_type_id',
+          'master_storage s'    => 's.id = l.storage_type_id',
+          'master_memory m'     => 'm.id = l.memory_type_id',
+          'master_account a'    => 'a.id = l.account_type_id',
+          'master_model mo'     => 'mo.id = l.model_id',
+          'master_brand b'      => 'b.id = mo.brand_id',
+          'users uc'            => 'uc.id = l.created_by',
+          'users uu'            => 'uu.id = l.updated_by'
+        ];
+
+        $db = $this->M_laptop->get('laptop l', ['l.id' => $id], $join, 'left', ['e.name, mo.name, l.name' => 'asc'], null, null, null, $select);    
+        if(! $db){ 
+          show_404();
+        }
+      }
+
       $data['id']         = base64_encode($id);
       $data['db']         = $db;
-      $data['t_software'] = $this->_show_table_software();
+      $data['t_software'] = $this->_show_table_software($id);
       $data['has_save']   = ($this->session->flashdata('has_save')) ?: false;
       $data['message']    = ($this->session->flashdata('message')) ?: [];
       $data['page_title'] = ($id) ? "Edit Laptop" : "New Laptop";
@@ -167,7 +208,7 @@ class Laptop extends Management_Controller {
     }
   }
 
-  function _show_table_software(){
+  function _show_table_software($id = null){
     // set data content
     $data_content = [];
     
@@ -216,31 +257,15 @@ class Laptop extends Management_Controller {
 
   function ajax_module_index(){
     $like  					= [];
-    $where  				= [];
+    $where  				= ['e.flag_active' => '1'];
     $action 				= [];
     $table_content 	= [];
 
     // related to datatable
-    $offset = $this->input->post('start');
-    $limit  = $this->input->post('length');
-    $draw   = $this->input->post('draw');
-    $order  = $this->input->post('order');
     $filter = $this->input->post('filter');
-
-    $search = $this->input->post('search');
-    if($search && $search['value']){
-      $like = [
-        'lower(name)' => strtolower($search['value']),
-      ];
-    }
 
     // parse data filter dari js menjadi format PHP
     parse_str($filter, $filter_post);
-
-    // related to datatable
-
-    // hanya dapatkan data yang belum dihapus
-    $where = ['e.flag_active' => '1'];
 
     // bila ada filter
     if($filter_post){
@@ -261,7 +286,8 @@ class Laptop extends Management_Controller {
       m.name as memory_name,
       m.code as memory_code,
       a.name as account_name,
-      mo.name as model_name
+      mo.name as model_name,
+      b.name as brand_name
     ';
 
     $join = [
@@ -272,6 +298,7 @@ class Laptop extends Management_Controller {
       'master_memory m'     => 'm.id = l.memory_type_id',
       'master_account a'    => 'a.id = l.account_type_id',
       'master_model mo'     => 'mo.id = l.model_id',
+      'master_brand b'      => 'b.id = mo.brand_id',
     ];
 
     $db_total = $this->M_laptop->get_count('laptop l', $where, $join, 'left', null, null, null, $like, 'l.id');
@@ -279,23 +306,31 @@ class Laptop extends Management_Controller {
     foreach($db_data as $i => $v) {
 
       $action = [
-          '<a href="javascript:void(0)" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i></a>',
+          '<a href="'.base_url($this->module_path.'/edit/'.base64_encode($v->id)).'" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i></a>',
           '<a href="javascript:void(0)" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>',
       ];
+
+      // link ke edit item
+      $link_model     = ($v->model_name) ? anchor('/master/model', $v->brand_name.' '.$v->model_name) : null;
+      $link_memory    = ($v->memory_code) ? anchor('/master/memory_type', $v->memory_code) : null;
+      $link_storage   = ($v->storage_code) ? anchor('/master/storage_type', $v->storage_code) : null;
+      $link_os        = ($v->os_name) ? anchor('/master/os_type', $v->os_name) : null;
+      $link_entity    = ($v->entity_name) ? anchor('/master/entity', $v->entity_name) : null;
+      $link_location  = ($v->location_name) ? anchor('/master/location', $v->location_name) : null;
       
       $table_content[] = [
         'id'            => $v->id,
-        'entity'        => $v->entity_name,
-        'location'      => $v->location_name,
+        'entity'        => $link_entity,
+        'location'      => $link_location,
         'code'          => $v->code,
-        'model'         => $v->model_name,
+        'model'         => $link_model,
         'name'          => $v->name,
         'sn'            => $v->serial_number,
-        'os'            => $v->os_name,
+        'os'            => $link_os,
         'os_key'        => $v->os_product_key,
-        'storage_type'  => $v->storage_code,
+        'storage_type'  => $link_storage,
         'storage_size'  => $v->storage_size,
-        'memory_type'   => $v->memory_code,
+        'memory_type'   => $link_memory,
         'memory_size'   => $v->memory_size,
         'status'        => $v->flag_status,
         'action'	      => '<center><div class="btn-group">'.implode('', $action).'</div></center>',
