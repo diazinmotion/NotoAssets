@@ -36,8 +36,8 @@ class M_laptop extends MY_Model {
 				$software_id[] 	= $i;
 				
 				// masukkan dalam data update
-				$temp_software 	+= ['id' => $i];
-				$software_update = $temp_software;
+				$temp_software 		+= ['id' => $i];
+				$software_update[] = $temp_software;
 			}else{
 				// masukkan dalam data insert
 				$software_insert[] = $temp_software;
