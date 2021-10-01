@@ -302,7 +302,7 @@ class Laptop extends Management_Controller {
     ];
 
     $db_total = $this->M_laptop->get_count('laptop l', $where, $join, 'left', null, null, null, $like, 'l.id');
-    $db_data 	= $this->M_laptop->get('laptop l', $where, $join, 'left', ['e.name, mo.name, l.name' => 'asc'], $limit, $offset, $like, $select);
+    $db_data 	= $this->M_laptop->get('laptop l', $where, $join, 'left', ['e.name, mo.name, l.name' => 'asc'], null, null, null, $select);
     foreach($db_data as $i => $v) {
 
       $action = [
