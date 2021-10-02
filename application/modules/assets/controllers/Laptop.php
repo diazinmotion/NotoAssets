@@ -136,6 +136,9 @@ class Laptop extends Management_Controller {
           $data_software[$i] = $temp_software;
         }
 
+        var_dump($post);
+        die();
+
         $db = $this->M_laptop->proccess_data($id, $data, $data_software);
         if(! $db){
           $msg[] = 'Cant save this asset for this moment. Please try again later.';
@@ -149,7 +152,8 @@ class Laptop extends Management_Controller {
 
       redirect('assets/laptop/'.(($id) ? 'edit/'.base64_encode($id) : 'create'));
     }else{
-      $db = false;
+      $db   = false;
+      $db_c = false;
 
       if($id){
         $select = '
@@ -190,11 +194,14 @@ class Laptop extends Management_Controller {
         if(! $db){ 
           show_404();
         }
+
+        $db_c = $this->M_laptop->get_laptop_checklist($id);
       }
 
       $data['id']         = base64_encode($id);
       $data['db']         = $db;
-      $data['t_software'] = $this->_show_table_software($id);
+      $data['db_c']       = $db_c;
+      $data['t_software'] = $this->_table_software($id);
       $data['has_save']   = ($this->session->flashdata('has_save')) ?: false;
       $data['message']    = ($this->session->flashdata('message')) ?: [];
       $data['page_title'] = ($id) ? "Edit Laptop" : "New Laptop";
@@ -207,83 +214,6 @@ class Laptop extends Management_Controller {
       
       $this->load->view('layouts/cms/V_master', $data);
     }
-  }
-
-  function _show_table_software($id = null){
-    // set data content
-    $data_content = [];
-    
-    // set heading
-    $this->table->set_heading(
-      ['data' => 'Software Name', 'class' => 'bg-primary', 'style' => 'width:30%'],
-      ['data' => 'Installed', 'class' => 'bg-primary', 'style' => 'width:15%'],
-      ['data' => 'Expired', 'class' => 'bg-primary', 'style' => 'width:15%'],
-      ['data' => 'Product Key', 'class' => 'bg-primary', 'style' => 'width:30%'],
-      ['data' => 'Actions', 'class' => 'bg-primary text-center', 'style' => 'width:10%']
-    );
-
-    $select = "
-      ls.*,
-      l.id as license_id,
-      l.name as license_name,
-      l.universal_product_key as license_universal_product_key,
-      l.universal_expired_at as license_universal_expired_at,
-      l.is_bulk_license as license_is_bulk_license,
-      s.id as software_id,
-      s.name as software_name
-    ";
-    $join = [
-      'license l'         => 'l.id = ls.license_id',
-      'master_software s' => 's.id = l.software_id'
-    ];
-    $db = $this->M_license->get('license_seat ls', ['laptop_id' => $id], $join, 'left', null, null, null, null, $select);
-    foreach($db as $v){
-      $data_content[$v->id] = [
-        'software_id'           => $v->software_id,
-        'software_name'         => $v->software_name,
-        'license_id'            => $v->license_id,
-        'license_name'          => $v->license_name,
-        'license_expired'       => $v->expiration_at,
-        'license_installed_at'  => $v->installed_at,
-        'license_product_key'   => $v->product_key,
-      ];
-    }
-
-    $data_content['uid'] = [
-      'software_id'           => null,
-      'software_name'         => null,
-      'license_id'            => null,
-      'license_name'          => null,
-      'license_expired'       => null,
-      'license_installed_at'  => null,
-      'license_product_key'   => null,
-    ];
-
-    foreach($data_content as $i => $v){
-      $uid = (! is_numeric($i)) ? 'uid' : $i;
-      
-      $opt_software = [$v['software_id'] => $v['software_name']];
-      $opt_license  = [$v['license_id'] => $v['license_name']];
-
-      $f_software = form_dropdown('software_id['.$uid.']', $opt_software, $v['software_id'], 'class=software_id');
-      $f_license  = form_dropdown('license_id['.$uid.']', $opt_license, $v['license_id'], 'class=license_id');
-      $f_install  = form_input('software_install_at['.$uid.']', (($v['license_installed_at']) ? Carbon::parse($v['license_installed_at'])->format('d-m-Y') : null), 'class="dtp-max-today form-control software_install_at" placeholder="Input data"');
-      $f_expired  = form_input('software_expired_at['.$uid.']', (($v['license_expired']) ? Carbon::parse($v['license_expired'])->format('d-m-Y') : null), 'class="dtp form-control software_expired_at" placeholder="Input data"');
-      $f_p_key    = form_input('software_product_key['.$uid.']', $v['license_product_key'], 'class="form-control software_product_key" placeholder="Input data"');
-      $f_delete   = '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-software-delete"><i class="fa fa-trash fa-fw"></i></a>';
-
-      $action = implode(' ', [$f_delete]);
-
-      $this->table->add_row(
-        ['data' => $f_software.'<div class="clearfix">'.$f_license.'</div>'],
-        ['data' => $f_install],
-        ['data' => $f_expired],
-        ['data' => $f_p_key],
-        ['data' => $action, 'class' => 'text-center']
-      );
-    }
-
-    return generate_table('table-software');
   }
 
   function ajax_module_index(){
@@ -395,4 +325,81 @@ class Laptop extends Management_Controller {
 
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
 	}
+
+  function _table_software($id = null){
+    // set data content
+    $data_content = [];
+    
+    // set heading
+    $this->table->set_heading(
+      ['data' => 'Software Name', 'class' => 'bg-primary', 'style' => 'width:30%'],
+      ['data' => 'Installed', 'class' => 'bg-primary', 'style' => 'width:15%'],
+      ['data' => 'Expired', 'class' => 'bg-primary', 'style' => 'width:15%'],
+      ['data' => 'Product Key', 'class' => 'bg-primary', 'style' => 'width:30%'],
+      ['data' => 'Actions', 'class' => 'bg-primary text-center', 'style' => 'width:10%']
+    );
+
+    $select = "
+      ls.*,
+      l.id as license_id,
+      l.name as license_name,
+      l.universal_product_key as license_universal_product_key,
+      l.universal_expired_at as license_universal_expired_at,
+      l.is_bulk_license as license_is_bulk_license,
+      s.id as software_id,
+      s.name as software_name
+    ";
+    $join = [
+      'license l'         => 'l.id = ls.license_id',
+      'master_software s' => 's.id = l.software_id'
+    ];
+    $db = $this->M_license->get('license_seat ls', ['laptop_id' => $id], $join, 'left', null, null, null, null, $select);
+    foreach($db as $v){
+      $data_content[$v->id] = [
+        'software_id'           => $v->software_id,
+        'software_name'         => $v->software_name,
+        'license_id'            => $v->license_id,
+        'license_name'          => $v->license_name,
+        'license_expired'       => $v->expiration_at,
+        'license_installed_at'  => $v->installed_at,
+        'license_product_key'   => $v->product_key,
+      ];
+    }
+
+    $data_content['uid'] = [
+      'software_id'           => null,
+      'software_name'         => null,
+      'license_id'            => null,
+      'license_name'          => null,
+      'license_expired'       => null,
+      'license_installed_at'  => null,
+      'license_product_key'   => null,
+    ];
+
+    foreach($data_content as $i => $v){
+      $uid = (! is_numeric($i)) ? 'uid' : $i;
+      
+      $opt_software = [$v['software_id'] => $v['software_name']];
+      $opt_license  = [$v['license_id'] => $v['license_name']];
+
+      $f_software = form_dropdown('software_id['.$uid.']', $opt_software, $v['software_id'], 'class=software_id');
+      $f_license  = form_dropdown('license_id['.$uid.']', $opt_license, $v['license_id'], 'class=license_id');
+      $f_install  = form_input('software_install_at['.$uid.']', (($v['license_installed_at']) ? Carbon::parse($v['license_installed_at'])->format('d-m-Y') : null), 'class="dtp-max-today form-control software_install_at" placeholder="Input data"');
+      $f_expired  = form_input('software_expired_at['.$uid.']', (($v['license_expired']) ? Carbon::parse($v['license_expired'])->format('d-m-Y') : null), 'class="dtp form-control software_expired_at" placeholder="Input data"');
+      $f_p_key    = form_input('software_product_key['.$uid.']', $v['license_product_key'], 'class="form-control software_product_key" placeholder="Input data"');
+      $f_delete   = '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-software-delete"><i class="fa fa-trash fa-fw"></i></a>';
+
+      $action = implode(' ', [$f_delete]);
+
+      $this->table->add_row(
+        ['data' => $f_software.'<div class="clearfix">'.$f_license.'</div>'],
+        ['data' => $f_install],
+        ['data' => $f_expired],
+        ['data' => $f_p_key],
+        ['data' => $action, 'class' => 'text-center']
+      );
+    }
+
+    return generate_table('table-software');
+  }
 }

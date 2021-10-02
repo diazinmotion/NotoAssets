@@ -8,6 +8,24 @@ class M_laptop extends MY_Model {
 		$this->tabel = 'laptop';
 	}
 
+	function get_laptop_checklist($id_laptop = null){
+		$this->db->select("
+			l.*,
+			c.name as checklist_name,
+			ci.id as checklist_item_id,
+			GROUP_CONCAT(concat(COALESCE(ci.id, 0),'|',COALESCE(cl.id, 0),'|', ci.name,'|', COALESCE(cl.has_done, 'N')) SEPARATOR '$') as task_name
+		");
+		$this->db->join('checklist c', 'c.id = l.checklist_id', 'left');
+		$this->db->join('checklist_item ci', 'ci.checklist_id = c.id', 'left');
+		$this->db->join('checklist_laptop_status cl', 'cl.checklist_item_id = ci.id and cl.checklist_laptop_id = l.id','left');
+		$this->db->where('laptop_id', $id_laptop);
+		$this->db->group_by('l.id');
+
+		$q = $this->db->get('checklist_laptop l');
+
+		return $q->result() ?: [];
+	}
+
 	function proccess_data($id = null, $header = [], $software = []){
 		// variable untuk data software
 		$software_id 			= [];

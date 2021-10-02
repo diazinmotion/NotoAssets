@@ -14,7 +14,7 @@
             </ul>
           </li>
           <li><a href="#history" data-toggle="tab">History</a></li>
-          <li><a href="#todo" data-toggle="tab">ToDo</a></li>
+          <li><a href="#todo" data-toggle="tab">Checklists</a></li>
           <? } ?>
           <li><a href="#software" data-toggle="tab">Software &amp; Licenses</a></li>
           <li class="active"><a href="#details" data-toggle="tab">Details</a></li>
@@ -340,7 +340,61 @@
             </div>
           </div>
           <div class="tab-pane" id="todo">
-            TODO
+            <div class="row">
+              <div class="col-lg-4">
+                <h4 class="text-bold text-primary">Checklists</h4>
+                <hr>
+                <b>HOW TO USE:</b>
+                <p>
+                  This section provide information about checklist that should be done for this asset.
+                  Please check or uncheck for each task provided.
+                </p>
+              </div>
+              <div class="col-lg-8">
+                <div class="row">
+                  <? foreach ($db_c as $v) { ?>
+                  <div class="col-lg-12 checklist-table">
+                    <h5 class="text-bold">
+                      <?= $v->checklist_name ?>
+                      <span class="pull-right"><a href="javascript:void(0)" class="text-red checklist-delete">Delete</a></span>
+                    </h5>
+                    <div class="table-responsive">
+                      <table class="table table-bordered tabled-stripped table-condensed">
+                        <thead>
+                          <th class="bg-primary">Tasks</th>
+                          <th class="bg-primary text-center" style="width:20%">Status</th>
+                        </thead>
+                        <tbody>
+                          <? 
+                            $ex   = explode('$', $v->task_name); 
+                            if($ex){
+                              foreach ($ex as $exv) {
+                                $has_checked  = false;
+                                $ex_r         = explode('|', $exv);
+                                $index        = (($ex_r[1] == 0) ? 'new_'.rand(0,9999) : $ex_r[1]);
+                                if($ex_r){
+                                  if($ex_r[3] == 'Y'){
+                                    $has_checked = true;
+                                  }
+                                }
+                                echo '<tr>
+                                        <td>'.$ex_r[2].'
+                                          <input type="hidden" name="checklist_item_id['.$index.']" value="'.$ex_r[0].'">
+                                          <input type="hidden" name="checklist_laptop_id['.$index.']" value="'.$v->laptop_id.'">
+                                        </td>
+                                        <td class="text-center"><input type="checkbox" name="checklist_has_done['.$index.']" value="Y" '.(($has_checked) ? 'checked' : null).'/></td>
+                                      </tr>';
+                              }
+                            }
+                          ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <? } ?>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="tab-pane" id="history">
             MAINTENANCE HISTORY / ASSIGNMENT TO USER HISTORY
