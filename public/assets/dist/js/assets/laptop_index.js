@@ -96,6 +96,14 @@ $('#table-content').bootstrapTable('destroy').bootstrapTable({
       sortable: true,
     },
     {
+      title: 'Software Installed',
+      field: 'software_installed',
+      align: 'center',
+      valign: 'middle',
+      searchable: true,
+      sortable: true,
+    },
+    {
       title: 'Status',
       field: 'status',
       align: 'center',

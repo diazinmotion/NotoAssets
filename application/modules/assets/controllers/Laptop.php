@@ -318,7 +318,8 @@ class Laptop extends Management_Controller {
       m.code as memory_code,
       a.name as account_name,
       mo.name as model_name,
-      b.name as brand_name
+      b.name as brand_name,
+      (select count(id) from license_seat sls where l.id = sls.laptop_id) as software_installed
     ';
 
     $join = [
@@ -350,21 +351,22 @@ class Laptop extends Management_Controller {
       $link_location  = ($v->location_name) ? anchor('/master/location', $v->location_name) : null;
       
       $table_content[] = [
-        'id'            => $v->id,
-        'entity'        => $link_entity,
-        'location'      => $link_location,
-        'code'          => $v->code,
-        'model'         => $link_model,
-        'name'          => $v->name,
-        'sn'            => $v->serial_number,
-        'os'            => $link_os,
-        'os_key'        => $v->os_product_key,
-        'storage_type'  => $link_storage,
-        'storage_size'  => $v->storage_size,
-        'memory_type'   => $link_memory,
-        'memory_size'   => $v->memory_size,
-        'status'        => $v->flag_status,
-        'action'	      => '<center><div class="btn-group">'.implode('', $action).'</div></center>',
+        'id'                  => $v->id,
+        'entity'              => $link_entity,
+        'location'            => $link_location,
+        'code'                => $v->code,
+        'model'               => $link_model,
+        'name'                => $v->name,
+        'sn'                  => $v->serial_number,
+        'os'                  => $link_os,
+        'os_key'              => $v->os_product_key,
+        'storage_type'        => $link_storage,
+        'storage_size'        => $v->storage_size,
+        'memory_type'         => $link_memory,
+        'memory_size'         => $v->memory_size,
+        'status'              => $v->flag_status,
+        'software_installed'  => $v->software_installed,
+        'action'	            => '<center><div class="btn-group">'.implode('', $action).'</div></center>',
       ];
     }
 
