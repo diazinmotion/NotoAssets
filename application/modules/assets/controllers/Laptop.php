@@ -419,31 +419,33 @@ class Laptop extends Management_Controller {
       ['data' => 'Actions', 'class' => 'bg-primary text-center', 'style' => 'width:10%']
     );
 
-    $select = "
-      ls.*,
-      l.id as license_id,
-      l.name as license_name,
-      l.universal_product_key as license_universal_product_key,
-      l.universal_expired_at as license_universal_expired_at,
-      l.is_bulk_license as license_is_bulk_license,
-      s.id as software_id,
-      s.name as software_name
-    ";
-    $join = [
-      'license l'         => 'l.id = ls.license_id',
-      'master_software s' => 's.id = l.software_id'
-    ];
-    $db = $this->M_license->get('license_seat ls', ['laptop_id' => $id], $join, 'left', null, null, null, null, $select);
-    foreach($db as $v){
-      $data_content[$v->id] = [
-        'software_id'           => $v->software_id,
-        'software_name'         => $v->software_name,
-        'license_id'            => $v->license_id,
-        'license_name'          => $v->license_name,
-        'license_expired'       => $v->expiration_at,
-        'license_installed_at'  => $v->installed_at,
-        'license_product_key'   => $v->product_key,
+    if($id){
+      $select = "
+        ls.*,
+        l.id as license_id,
+        l.name as license_name,
+        l.universal_product_key as license_universal_product_key,
+        l.universal_expired_at as license_universal_expired_at,
+        l.is_bulk_license as license_is_bulk_license,
+        s.id as software_id,
+        s.name as software_name
+      ";
+      $join = [
+        'license l'         => 'l.id = ls.license_id',
+        'master_software s' => 's.id = l.software_id'
       ];
+      $db = $this->M_license->get('license_seat ls', ['laptop_id' => $id], $join, 'left', null, null, null, null, $select);
+      foreach($db as $v){
+        $data_content[$v->id] = [
+          'software_id'           => $v->software_id,
+          'software_name'         => $v->software_name,
+          'license_id'            => $v->license_id,
+          'license_name'          => $v->license_name,
+          'license_expired'       => $v->expiration_at,
+          'license_installed_at'  => $v->installed_at,
+          'license_product_key'   => $v->product_key,
+        ];
+      }
     }
 
     $data_content['uid'] = [
@@ -485,7 +487,7 @@ class Laptop extends Management_Controller {
 
   function _table_logs($id = null){
     // set data content
-    $data_content = [];
+    $db = false;
     
     // set heading
     $this->table->set_heading(
@@ -494,14 +496,16 @@ class Laptop extends Management_Controller {
       ['data' => 'Initiator', 'class' => 'bg-primary text-center', 'style' => 'width:15%']
     );
 
-    $join = ['users u' => 'u.id = h.created_by'];
-    $db   = $this->M_laptop->get('laptop_history h', ['h.laptop_id' => $id], $join, 'left', ['h.created_at' => 'desc'], null, null, null, 'u.full_name, h.*');
-    foreach($db as $v){
-      $this->table->add_row(
-        ['data' => '<b>'.$v->events.'</b><small class="clearfix">Date: '.Carbon::parse($v->created_at)->format('d/m/Y H:i').'</small>'],
-        ['data' => $v->detail],
-        ['data' => '<center>'.$v->full_name.'</center>'],
-      );
+    if($id){
+      $join = ['users u' => 'u.id = h.created_by'];
+      $db   = $this->M_laptop->get('laptop_history h', ['h.laptop_id' => $id], $join, 'left', ['h.created_at' => 'desc'], null, null, null, 'u.full_name, h.*');
+      foreach($db as $v){
+        $this->table->add_row(
+          ['data' => '<b>'.$v->events.'</b><small class="clearfix">Date: '.Carbon::parse($v->created_at)->format('d/m/Y H:i').'</small>'],
+          ['data' => $v->detail],
+          ['data' => '<center>'.$v->full_name.'</center>'],
+        );
+      }
     }
 
     if(! $db){

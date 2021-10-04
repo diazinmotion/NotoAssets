@@ -217,6 +217,12 @@ class Software extends Management_Controller {
     }
 
     if($exclude = $this->input->post('exclude')){
+      $exclude = array_filter($exclude, function($r){
+        if($r && $r != ''){
+          return true;
+        }
+      });
+      
       $where += ['id NOT IN ('.implode(',', $exclude).')' => null];
     }
 
