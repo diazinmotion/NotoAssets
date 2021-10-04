@@ -1,6 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use Carbon\Carbon;
+
 class M_laptop extends MY_Model {
+
+	private $laptop_status	= [
+		0 => 'DECOMISSIONED',
+		1 => 'NORMAL',
+		2 => 'IN SERVICE',
+		3 => 'BROKEN',
+		4 => 'NEW',
+	];
 
 	public function __construct(){
 		parent::__construct();
@@ -31,8 +41,19 @@ class M_laptop extends MY_Model {
 		$software_id 							= [];
 		$software_insert 					= [];
 		$software_update 					= [];
+		$original_flag_status			= null;
 
 		$this->db->trans_start();
+
+		// ORIGINAL DATA
+		$original_flag_status = $header['flag_status_original'];
+		$original_code 				= $header['code_original'];
+
+		unset(
+			$header['flag_status_original'],
+			$header['code_original'],
+		);
+		// END ORIGINAL DATA
 		
 		// START HEADER
 		if($id){
@@ -108,8 +129,39 @@ class M_laptop extends MY_Model {
 		// END LAPTOP CHECKLIST INSERT BARU
 
 		// START CHECKLIST STATUS UPDATE
-		$this->db->update_batch('checklist_laptop_status', $checklist, 'id');
+		if($checklist){
+			$this->db->update_batch('checklist_laptop_status', $checklist, 'id');
+		}
 		// END CHECKLIST STATUS
+
+		// START INSERT LOG
+		// hanya yang statusnya berubah saja
+		if($original_flag_status != $header['flag_status']){
+			$data_log = [
+				'events' 			=> 'CHANGE: Asset Status',
+				'detail' 			=> 'The laptop STATUS has been changed from '.$this->laptop_status[$original_flag_status].' -> '.$this->laptop_status[$header['flag_status']],
+				'created_by' 	=> current_user_session('id'),
+				'created_at' 	=> Carbon::now(),
+				'laptop_id' 	=> $id,
+				'category' 		=> '1',
+			];
+
+			$this->db->insert('laptop_history', $data_log);
+		}
+
+		if($original_code != $header['code']){
+			$data_log = [
+				'events' 			=> 'CHANGE: Asset Barcode',
+				'detail' 			=> 'The BARCODE/CODE has been changed from '.$original_code.' -> '.$header['code'],
+				'created_by' 	=> current_user_session('id'),
+				'created_at' 	=> Carbon::now(),
+				'laptop_id' 	=> $id,
+				'category' 		=> '1',
+			];
+
+			$this->db->insert('laptop_history', $data_log);
+		}
+		// END INSERT LOG
 
 		$this->db->trans_complete();
 

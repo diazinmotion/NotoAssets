@@ -10,10 +10,10 @@
             </a>
             <ul class="dropdown-menu">
               <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-copy fa-fw"></i> Clone</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="text-red"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="text-red btn-laptop-delete" data-id="<?= ($db) ? $db[0]->id : null ?>"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
             </ul>
           </li>
-          <li><a href="#history" data-toggle="tab">History</a></li>
+          <li><a href="#history" data-toggle="tab">Asset Logs</a></li>
           <li><a href="#todo" data-toggle="tab">Checklists</a></li>
           <? } ?>
           <li><a href="#software" data-toggle="tab">Software &amp; Licenses</a></li>
@@ -94,6 +94,7 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Tag / Barcode</label>
                   <div class="col-sm-9">
+                    <input type="hidden" name="code_original" value="<?= ($db) ? $db[0]->code : null ?>">
                     <input type="text" name="code" class="form-control" placeholder="Input data" value="<?= ($db) ? $db[0]->code : null ?>">
                   </div>
                 </div>
@@ -294,10 +295,8 @@
                 <div class="form-group row">
                   <label class="col-sm-3 control-label">Status</label>
                   <div class="col-sm-9">
-                    <select name="flag_status" class='select2-general'>
-                      <option value="0">DECOMISSIONED</option>
-                      <option value="1">NORMAL</option>
-                    </select>
+                    <input type="hidden" name="flag_status_original" value="<?= ($db) ? $db[0]->flag_status : null ?>">
+                    <?= form_dropdown('flag_status', $l_status, (($db) ? $db[0]->flag_status : null), 'class="select2-general"') ?>
                   </div>
                 </div>
               </div>
@@ -410,7 +409,19 @@
             </div>
           </div>
           <div class="tab-pane" id="history">
-            MAINTENANCE HISTORY / ASSIGNMENT TO USER HISTORY
+            <div class="row">
+              <div class="col-lg-4">
+                <h4 class="text-bold text-primary">Asset Logs</h4>
+                <hr>
+                <b>HOW TO USE:</b>
+                <p>
+                  This section lists all action and logs for this specific asset.
+                </p>
+              </div>
+              <div class="col-lg-8">
+                <?= $t_logs ?>
+              </div>
+            </div>
           </div>
         </div>
         <div class="panel-footer">

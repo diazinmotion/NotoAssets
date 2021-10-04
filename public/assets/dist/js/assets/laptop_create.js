@@ -126,6 +126,42 @@ $(document).on('click', '.checklist-delete', function(){
   });
 });
 
+$(document).on('click', '.btn-laptop-delete', function(){
+  var data_id = $(this).data('id');
+
+  Swal.fire({
+      title: "Are you sure for this action?",
+      text: "This action cannot be undone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+  }).then((r) => {
+    if(r.isConfirmed) {
+      $.post(module_url + '/ajax_delete_item', { id: data_id }, function (d) {
+        if (d.status) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'The item has been deleted.',
+            showConfirmButton: true,
+            timer: 3000
+          });
+          
+          window.location.href = module_url;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Cant delete this item at this moment.',
+            showConfirmButton: true,
+            timer: 3000
+          });
+        }
+      });
+    }
+  });
+});
+
 function _show_popup(){
   // hanya tampilkan pesan apabila telah di save
   if(has_save){

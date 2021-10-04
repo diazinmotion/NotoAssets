@@ -74,28 +74,30 @@ class Laptop extends Management_Controller {
       
       if ($this->form_validation->run()) {
         $data = [
-          'code'                => $post['code'],
-          'name'                => $post['name'],
-          'entity_id'           => (isset($post['entity_id'])) ? $post['entity_id'] : null,
-          'location_id'         => (isset($post['location_id'])) ? $post['location_id'] : null,
-          'serial_number'       => $post['serial_number'],
-          'os_type_id'          => (isset($post['os_type_id'])) ? $post['os_type_id'] : null,
-          'os_product_key'      => $post['os_product_key'],
-          'pki_email'           => $post['pki_email'],
-          'pki_password'        => $post['pki_password'],
-          'encryption_password' => $post['encryption_password'],    
-          'storage_type_id'     => (isset($post['storage_type_id'])) ? $post['storage_type_id'] : null,
-          'storage_type_brand'  => $post['storage_type_brand'],
-          'storage_size'        => $post['storage_size'],
-          'memory_type_id'      => (isset($post['memory_type_id'])) ? $post['memory_type_id'] : null,
-          'memory_brand'        => $post['memory_brand'],
-          'memory_size'         => $post['memory_size'],
-          'account_type_id'     => (isset($post['account_type_id'])) ? $post['account_type_id'] : null,
-          'account_email'       => $post['account_email'],
-          'flag_status'         => $post['flag_status'],
-          'purchased_at'        => ($post['purchased_at']) ? format_date_to_db($post['purchased_at']) : null,
-          'warranty_expired'    => ($post['warranty_expired']) ? format_date_to_db($post['warranty_expired']) : null,
-          'model_id'            => (isset($post['model_id'])) ? $post['model_id'] : null,
+          'code'                  => $post['code'],
+          'name'                  => $post['name'],
+          'entity_id'             => (isset($post['entity_id'])) ? $post['entity_id'] : null,
+          'location_id'           => (isset($post['location_id'])) ? $post['location_id'] : null,
+          'serial_number'         => $post['serial_number'],
+          'os_type_id'            => (isset($post['os_type_id'])) ? $post['os_type_id'] : null,
+          'os_product_key'        => $post['os_product_key'],
+          'pki_email'             => $post['pki_email'],
+          'pki_password'          => $post['pki_password'],
+          'encryption_password'   => $post['encryption_password'],    
+          'storage_type_id'       => (isset($post['storage_type_id'])) ? $post['storage_type_id'] : null,
+          'storage_type_brand'    => $post['storage_type_brand'],
+          'storage_size'          => $post['storage_size'],
+          'memory_type_id'        => (isset($post['memory_type_id'])) ? $post['memory_type_id'] : null,
+          'memory_brand'          => $post['memory_brand'],
+          'memory_size'           => $post['memory_size'],
+          'account_type_id'       => (isset($post['account_type_id'])) ? $post['account_type_id'] : null,
+          'account_email'         => $post['account_email'],
+          'flag_status'           => $post['flag_status'],
+          'purchased_at'          => ($post['purchased_at']) ? format_date_to_db($post['purchased_at']) : null,
+          'warranty_expired'      => ($post['warranty_expired']) ? format_date_to_db($post['warranty_expired']) : null,
+          'model_id'              => (isset($post['model_id'])) ? $post['model_id'] : null,
+          'flag_status_original'  => $post['flag_status_original'],
+          'code_original'         => $post['code_original']
         ];
 
         if(! $id){
@@ -240,7 +242,9 @@ class Laptop extends Management_Controller {
       $data['id']         = base64_encode($id);
       $data['db']         = $db;
       $data['db_c']       = $db_c;
+      $data['l_status']   = $this->laptop_status;
       $data['t_software'] = $this->_table_software($id);
+      $data['t_logs']     = $this->_table_logs($id);
       $data['has_save']   = ($this->session->flashdata('has_save')) ?: false;
       $data['message']    = ($this->session->flashdata('message')) ?: [];
       $data['page_title'] = ($id) ? "Edit Laptop" : "New Laptop";
@@ -329,7 +333,7 @@ class Laptop extends Management_Controller {
 
       $action = [
           '<a href="'.base_url($this->module_path.'/edit/'.base64_encode($v->id)).'" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i></a>',
-          '<a href="javascript:void(0)" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>',
+          '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-laptop-delete" data-id="'.$v->id.'"><i class="fa fa-trash"></i></a>',
       ];
 
       // link ke edit item
@@ -339,6 +343,8 @@ class Laptop extends Management_Controller {
       $link_os        = ($v->os_name) ? anchor('/master/os_type', $v->os_name) : null;
       $link_entity    = ($v->entity_name) ? anchor('/master/entity', $v->entity_name) : null;
       $link_location  = ($v->location_name) ? anchor('/master/location', $v->location_name) : null;
+
+      $s_status       = '<span class="label '.(!in_array($v->flag_status, [0,3]) ? 'label-primary' : 'label-danger').'">'.$this->laptop_status[$v->flag_status].'</span>';
       
       $table_content[] = [
         'id'                  => $v->id,
@@ -354,7 +360,7 @@ class Laptop extends Management_Controller {
         'storage_size'        => $v->storage_size,
         'memory_type'         => $link_memory,
         'memory_size'         => $v->memory_size,
-        'status'              => $v->flag_status,
+        'status'              => $s_status,
         'software_installed'  => $v->software_installed,
         'action'	            => '<center><div class="btn-group">'.implode('', $action).'</div></center>',
       ];
@@ -375,11 +381,7 @@ class Laptop extends Management_Controller {
 		$msg 		= [];
 
 		if($id = $this->input->post('id')){
-			$data = [
-				'deleted_at'  => date('Y-m-d H:i:s'),
-				'deleted_by'  => current_user_session('id'),
-			];
-			$db = $this->M_laptop->update(null, ['id' => $id], $data);
+			$db = $this->M_laptop->delete(null, ['id' => $id], $data);
 			if ($db) { $status = true; }
 		}
 
@@ -461,5 +463,35 @@ class Laptop extends Management_Controller {
     }
 
     return generate_table('table-software');
+  }
+
+  function _table_logs($id = null){
+    // set data content
+    $data_content = [];
+    
+    // set heading
+    $this->table->set_heading(
+      ['data' => 'Events', 'class' => 'bg-primary', 'style' => 'width:30%'],
+      ['data' => 'Detail', 'class' => 'bg-primary'],
+      ['data' => 'Initiator', 'class' => 'bg-primary text-center', 'style' => 'width:15%']
+    );
+
+    $join = ['users u' => 'u.id = h.created_by'];
+    $db   = $this->M_laptop->get('laptop_history h', ['h.laptop_id' => $id], $join, 'left', ['h.created_at' => 'desc'], null, null, null, 'u.full_name, h.*');
+    foreach($db as $v){
+      $this->table->add_row(
+        ['data' => '<b>'.$v->events.'</b><small class="clearfix">Date: '.Carbon::parse($v->created_at)->format('d/m/Y H:i').'</small>'],
+        ['data' => $v->detail],
+        ['data' => '<center>'.$v->full_name.'</center>'],
+      );
+    }
+
+    if(! $db){
+      $this->table->add_row(
+        ['data' => '<center class="text-bold">No Logs Available For This Laptop</center>', 'colspan' => 4]
+      );
+    }
+
+    return generate_table('table-logs');
   }
 }

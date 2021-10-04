@@ -67,7 +67,7 @@
               data-id-field="id"
               data-page-list="[10, 25, 50, 100, all]"
               data-url="<?= $module_url.'/ajax_module_index' ?>"
-              data-response-handler="responseHandler"
+              data-response-handler="_responseHandler"
               data-export-options='{
                 "fileName": "export-assets-<?= date('Y-m-d') ?>",
                 "ignoreColumn": ["action","checkbox"]

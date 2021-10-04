@@ -30,6 +30,8 @@
         <ul class="treeview-menu">
           <li><a href="<?= base_url('assets/laptop') ?>"><i class="fa fa-circle-o"></i> Laptops</a></li>
           <li><a href="#"><i class="fa fa-circle-o"></i> General Assets</a></li>
+          <li><a href="<?= base_url('assets/assets_service') ?>"><i class="fa fa-circle-o"></i> Assets Maintenance</a></li>
+          <li><a href="<?= base_url('assets/assets_handover') ?>"><i class="fa fa-circle-o"></i> Assets Handover</a></li>
         </ul>
       </li>
       <li class="treeview">
