@@ -126,6 +126,42 @@ $(document).on('click', '.checklist-delete', function(){
   });
 });
 
+$(document).on('click', '.btn-laptop-clone', function(){
+  var data_id = $(this).data('id');
+
+  Swal.fire({
+      title: "Are you sure for this action?",
+      text: "All this asset information will be clone.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+  }).then((r) => {
+    if(r.isConfirmed) {
+      $.post(module_url + '/ajax_clone_item', { id: data_id }, function (d) {
+        if (d.status) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'The item has been cloned.',
+            showConfirmButton: true,
+            timer: 3000
+          });
+
+          window.location.href = module_url;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            html: d.msg,
+            showConfirmButton: true,
+            timer: 3000
+          });
+        }
+      });
+    }
+  });
+});
+
 $(document).on('click', '.btn-laptop-delete', function(){
   var data_id = $(this).data('id');
 

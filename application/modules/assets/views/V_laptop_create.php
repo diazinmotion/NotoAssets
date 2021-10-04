@@ -9,7 +9,7 @@
               Actions <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#"><i class="fa fa-copy fa-fw"></i> Clone</a></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="btn-laptop-clone" data-id="<?= ($db) ? $db[0]->id : null ?>"><i class="fa fa-copy fa-fw"></i> Clone</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="text-red btn-laptop-delete" data-id="<?= ($db) ? $db[0]->id : null ?>"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
             </ul>
           </li>

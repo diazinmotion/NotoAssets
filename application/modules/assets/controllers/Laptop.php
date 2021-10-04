@@ -271,7 +271,7 @@ class Laptop extends Management_Controller {
       if($db){
         $status = true;
       }else{
-        $msg = 'Tidak dapat menghapus checklist ini.';
+        $msg = 'Cannot delete this checklist group.';
       }
     }else{
       $msg[] = str_replace(['<p>', '</p>'], [null, '<br/>'], validation_errors());
@@ -332,8 +332,9 @@ class Laptop extends Management_Controller {
     foreach($db_data as $i => $v) {
 
       $action = [
-          '<a href="'.base_url($this->module_path.'/edit/'.base64_encode($v->id)).'" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i></a>',
-          '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-laptop-delete" data-id="'.$v->id.'"><i class="fa fa-trash"></i></a>',
+          '<a href="'.base_url($this->module_path.'/edit/'.base64_encode($v->id)).'" class="btn btn-xs btn-primary" title="Edit Asset"><i class="fa fa-edit"></i></a>',
+          '<a href="javascript:void(0)" class="btn btn-xs btn-success btn-laptop-clone" data-id="'.$v->id.'" title="Clone Asset"><i class="fa fa-copy"></i></a>',
+          '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-laptop-delete" data-id="'.$v->id.'" title="Delete Asset"><i class="fa fa-trash"></i></a>',
       ];
 
       // link ke edit item
@@ -381,12 +382,29 @@ class Laptop extends Management_Controller {
 		$msg 		= [];
 
 		if($id = $this->input->post('id')){
-			$db = $this->M_laptop->delete(null, ['id' => $id], $data);
+			$db = $this->M_laptop->delete(null, ['id' => $id]);
 			if ($db) { $status = true; }
 		}
 
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
 	}
+
+  function ajax_clone_item(){
+    $status = false;
+		$msg 		= [];
+    $db     = false;
+    
+		if($id = $this->input->post('id')){
+      $db = $this->M_laptop->clone_item($id);
+			if ($db) { $status = true; }
+    }
+
+    if(! $db){
+      $msg = 'Cannot clone this asset at this moment.';
+    }
+
+		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
+  }
 
   function _table_software($id = null){
     // set data content
