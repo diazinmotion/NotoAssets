@@ -352,11 +352,21 @@
               </div>
               <div class="col-lg-8">
                 <div class="row">
+                  <div class="col-lg-12">
+                    <b>CHECKLIST</b>
+                    <div class="form-group row">
+                      <div class="col-lg-12">
+                        <select name="checklist_id[]" class='checklist_id'></select>
+                      </div>
+                    </div>
+                    <hr>
+                  </div>
+                  <? if($db_c){ ?>
                   <? foreach ($db_c as $v) { ?>
                   <div class="col-lg-12 checklist-table">
                     <h5 class="text-bold">
                       <?= $v->checklist_name ?>
-                      <span class="pull-right"><a href="javascript:void(0)" class="text-red checklist-delete">Delete</a></span>
+                      <span class="pull-right"><a href="javascript:void(0)" class="text-red checklist-delete" data-id="<?= $v->id ?>">Delete</a></span>
                     </h5>
                     <div class="table-responsive">
                       <table class="table table-bordered tabled-stripped table-condensed">
@@ -373,14 +383,14 @@
                                 $ex_r         = explode('|', $exv);
                                 $index        = (($ex_r[1] == 0) ? 'new_'.rand(0,9999) : $ex_r[1]);
                                 if($ex_r){
-                                  if($ex_r[3] == 'Y'){
+                                  if($ex_r[4] == 'Y'){
                                     $has_checked = true;
                                   }
                                 }
                                 echo '<tr>
-                                        <td>'.$ex_r[2].'
+                                        <td>'.$ex_r[3].'
                                           <input type="hidden" name="checklist_item_id['.$index.']" value="'.$ex_r[0].'">
-                                          <input type="hidden" name="checklist_laptop_id['.$index.']" value="'.$v->laptop_id.'">
+                                          <input type="hidden" name="checklist_laptop_id['.$index.']" value="'.$ex_r[2].'">
                                         </td>
                                         <td class="text-center"><input type="checkbox" name="checklist_has_done['.$index.']" value="Y" '.(($has_checked) ? 'checked' : null).'/></td>
                                       </tr>';
@@ -391,6 +401,9 @@
                       </table>
                     </div>
                   </div>
+                  <? } ?>
+                  <? }else{ ?>
+                    <center><b>This asset has no checklist yet</b></center>
                   <? } ?>
                 </div>
               </div>

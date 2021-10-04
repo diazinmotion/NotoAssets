@@ -91,6 +91,41 @@ $(document).on('click', '.btn-package-apply', function(){
   }
 });
 
+$(document).on('click', '.checklist-delete', function(){
+  var data_id = $(this).data('id');
+  Swal.fire({
+    title: "Confirmation",
+    text: "This action will replace the list on the table below. Continue?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: "Yes",
+  }).then((r) => {
+    if(r.isConfirmed) {
+      $.post(module_url + '/ajax_delete_checklist', {id: data_id}, function(d){
+        if(d.status){
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            html: 'The checklist has been deleted.',
+            showConfirmButton: true,
+            timer: 3000
+          }).then(() => {
+            window.location.reload();
+          });
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            html: d.msg,
+            showConfirmButton: true,
+            timer: 3000
+          });
+        }
+      });
+    }
+  });
+});
+
 function _show_popup(){
   // hanya tampilkan pesan apabila telah di save
   if(has_save){
@@ -400,6 +435,35 @@ function _reInitialize(){
       // tambahkan software2 yang telah dipilih
       selected_software.push($(this).val());
     });
+  });
+
+  $('.checklist_id').select2({
+    tags: false,
+    width: '100%',
+    multiple: true,
+    placeholder: 'Search an item',
+    ajax: {
+      url: base_url + 'checklists/ajax_get_checklist',
+      dataType: 'json',
+      type: "POST",
+      data: function (params) {
+        var queryParameters = {
+          param: params.term,
+        }
+
+        return queryParameters;
+      },
+      processResults: function (data) {
+        return {
+          results: $.map(data, function (item) {
+            return {
+              id: item.id,
+              text: item.text
+            }
+          })
+        };
+      }
+    }
   });
 
   $.each($('.license_id'), function(){

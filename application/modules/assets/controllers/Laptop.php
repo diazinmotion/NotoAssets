@@ -44,8 +44,10 @@ class Laptop extends Management_Controller {
     }
 
     if($post){
-      $data           = [];
-      $data_software  = [];
+      $data             = [];
+      $data_software    = [];
+      $data_checklist   = [];
+      $laptop_checklist = [];
 
       $this->form_validation->set_rules('entity_id', 'Entity', 'numeric|trim');
       $this->form_validation->set_rules('location_id', 'Location', 'numeric|trim');
@@ -111,35 +113,72 @@ class Laptop extends Management_Controller {
         }
         
         // dapatkan data software untuk aset ini
-        foreach($post['software_id'] as $i => $v){
-          $temp_software = [
-            'license_id'    => (isset($post['license_id'][$i])) ? $post['license_id'][$i] : null,
-            'expiration_at' => (isset($post['software_expired_at'][$i]) && $post['software_expired_at'][$i]) ? format_date_to_db($post['software_expired_at'][$i]) : null,
-            'installed_at'  => (isset($post['software_install_at'][$i]) && $post['software_install_at'][$i]) ? format_date_to_db($post['software_install_at'][$i]) : null,
-            'product_key'   => $post['software_product_key'][$i]
-          ];
-
-          if(is_numeric($i)){
-            // update
-            $temp_software += [
-              'updated_by' => current_user_session('id'),
-              'updated_at' => Carbon::now(),
+        if(isset($post['software_id'])){
+          foreach($post['software_id'] as $i => $v){
+            $temp_software = [
+              'license_id'    => (isset($post['license_id'][$i])) ? $post['license_id'][$i] : null,
+              'expiration_at' => (isset($post['software_expired_at'][$i]) && $post['software_expired_at'][$i]) ? format_date_to_db($post['software_expired_at'][$i]) : null,
+              'installed_at'  => (isset($post['software_install_at'][$i]) && $post['software_install_at'][$i]) ? format_date_to_db($post['software_install_at'][$i]) : null,
+              'product_key'   => $post['software_product_key'][$i]
             ];
-          }else{
-            // insert
-            $temp_software += [
-              'created_by' => current_user_session('id'),
-              'created_at' => Carbon::now(),
-            ];
+  
+            if(is_numeric($i)){
+              // update
+              $temp_software += [
+                'updated_by' => current_user_session('id'),
+                'updated_at' => Carbon::now(),
+              ];
+            }else{
+              // insert
+              $temp_software += [
+                'created_by' => current_user_session('id'),
+                'created_at' => Carbon::now(),
+              ];
+            }
+  
+            $data_software[$i] = $temp_software;
           }
-
-          $data_software[$i] = $temp_software;
         }
 
-        var_dump($post);
-        die();
+        // START CHECKLIST LAPTOP
+        // bila ada data ini dari form maka sudah pasti merupakan checklist baru
+        if(isset($post['checklist_id']) && $post['checklist_id']){
+          foreach($post['checklist_id'] as $v){
+            $laptop_checklist[] = [ 'checklist_id' => $v ];
+          }
+        }
+        // END CHECKLIST LAPTOP
+        
+        // START CHECKLIST ITEM STATUS
+        if(isset($post['checklist_item_id'])){
+          foreach($post['checklist_item_id'] as $i => $v){
+            $temp = [
+              'id'                  => $i,
+              'checklist_item_id'   => $v,
+              'checklist_laptop_id' => $post['checklist_laptop_id'][$i],
+              'has_done'            => (isset($post['checklist_has_done'][$i])) ? 'Y' : 'N',
+            ];
+  
+            if(is_numeric($i)){
+              // update
+              $temp += [
+                'updated_by' => current_user_session('id'),
+                'updated_at' => Carbon::now(),
+              ];
+            }else{
+              // insert
+              $temp += [
+                'created_by' => current_user_session('id'),
+                'created_at' => Carbon::now(),
+              ];
+            }
+  
+            $data_checklist[$i] = $temp;
+          }
+        }
+        // END CHECKLIST ITEM STATUS
 
-        $db = $this->M_laptop->proccess_data($id, $data, $data_software);
+        $db = $this->M_laptop->proccess_data($id, $data, $data_software, $laptop_checklist, $data_checklist);
         if(! $db){
           $msg[] = 'Cant save this asset for this moment. Please try again later.';
         }
@@ -214,6 +253,27 @@ class Laptop extends Management_Controller {
       
       $this->load->view('layouts/cms/V_master', $data);
     }
+  }
+
+  function ajax_delete_checklist(){
+    $status = false;
+    $msg    = [];
+    $post   = $this->input->post();
+
+    $this->form_validation->set_rules('id', 'ID', 'numeric|required');
+    if($this->form_validation->run()) {
+      // lakukan delete checklist group item
+      $db = $this->M_laptop->delete('checklist_laptop', ['id' => $post['id']]);
+      if($db){
+        $status = true;
+      }else{
+        $msg = 'Tidak dapat menghapus checklist ini.';
+      }
+    }else{
+      $msg[] = str_replace(['<p>', '</p>'], [null, '<br/>'], validation_errors());
+    }
+
+    $this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
   }
 
   function ajax_module_index(){

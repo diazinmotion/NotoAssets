@@ -160,7 +160,7 @@ class Checklists extends Management_Controller {
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
 	}
 
-  function ajax_get_package(){
+  function ajax_get_checklist(){
     $data   = [];
     $like   = [];
     $where  = [];
@@ -172,32 +172,11 @@ class Checklists extends Management_Controller {
       ];
     }
 
-    // join dengan tabel software untuk mendapatkan list software
-    $join = [
-      'master_checklist_item i'  => 'i.checklist_id = p.id',
-      'master_software s'               => 's.id = i.software_id AND s.deleted_at IS NULL',
-    ];
-    
-    $db 	= $this->M_checklist->get('master_checklist p', $where, $join, 'left', [' p.name' => 'asc'], null, null, null, 'p.id, p.code, p.name, GROUP_CONCAT(s.name) as software_list, GROUP_CONCAT(s.id) as software_list_id', ['p.id']);
+    $db = $this->M_checklist->get(null, [], null, null, ['name' => 'asc'], null, null, null, 'id, name');
     foreach($db as $i => $v){
-      // bila software list tidak kosong, maka tampilkan
-      $list_item  = [];
-      $list       = explode(',', $v->software_list);
-      $list_id    = explode(',', $v->software_list_id);
-
-      if($list && $list_id){
-        foreach ($list as $list_i => $list_v) {
-          $list_item[] = [
-            'id'    => $list_id[$list_i],
-            'name'  => $list_v,
-          ];
-        }
-      }
-
       $data[] = [
         'id'    => $v->id, 
-        'text'  => $v->name,
-        'list'  => $list_item
+        'text'  => $v->name
       ];
     }
 
