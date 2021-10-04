@@ -74,6 +74,7 @@ $(document).on('click', '.btn-item-edit', function () {
       
       $('input[name="id"]').val(d.data.id);
       $('input[name="name"]').val(d.data.name);
+      $('select[name="is_freeware"]').val(d.data.is_freeware);
       
       $.unblockUI();
       $('#modal-add-edit').modal('show');

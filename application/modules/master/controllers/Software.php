@@ -62,16 +62,19 @@ class Software extends Management_Controller {
     }
 
     $db_total = $this->M_software->get_count(null, $where, null, null, null, null, null, $like, 'id');
-    $db_data 	= $this->M_software->get(null, $where, null, null, ['name' => 'asc'], $limit, $offset, $like, 'id, name');
+    $db_data 	= $this->M_software->get(null, $where, null, null, ['name' => 'asc'], $limit, $offset, $like, 'id, name, is_freeware');
     foreach($db_data as $i => $v) {
 
       $action = [
           '<a href="javascript:void(0)" class="btn btn-xs btn-primary btn-item-edit" data-id="' . $v->id . '"><i class="fa fa-edit"></i></a>',
           '<a href="javascript:void(0)" class="btn btn-xs btn-danger btn-item-delete" data-id="' . $v->id . '"><i class="fa fa-trash"></i></a>',
       ];
+
+      $s_type = ($v->is_freeware == '1') ? '<span class="label label-primary">FREEWARE</span>' : '<span class="label label-warning">NON FREEWARE</span>';
       
       $table_content[] = [
         'name'    => $v->name,
+        'type'    => '<center>'.$s_type.'</center>',
         'action'	=> '<center><div class="btn-group">'.implode('', $action).'</div></center>',
       ];
     }
@@ -97,10 +100,11 @@ class Software extends Management_Controller {
         $post = $this->input->post();
 
         $data = [
-					'name' => $post['name'],
+					'name'        => $post['name'],
+          'is_freeware' => $post['is_freeware']
 				];
 
-			  if(! $post['id']){
+        if(! $post['id']){
 					// log
           $data += [
             'created_by' => current_user_session('id'),
@@ -108,6 +112,21 @@ class Software extends Management_Controller {
           ];
 
           $db = $this->M_software->insert(null, $data);
+
+          // bila tipe software nya adalah freeware maka masukkan lisensinya secara otomatis sebagai freeware
+          if($post['is_freeware'] == '1'){
+            $d_software = [
+              'name'            => 'Free License',
+              'purchased_at'    => Carbon::now(),
+              'software_id'     => $db,
+              'is_bulk_license' => 1,
+              'flag_permanent'  => 1,
+              'created_by'      => current_user_session('id'),
+              'created_at'      => Carbon::now(),
+            ];
+
+            $this->M_software->insert('license', $d_software);
+          }
         } else {
 					// log
           $data += [
@@ -116,6 +135,24 @@ class Software extends Management_Controller {
           ];
 
           $db = $this->M_software->update(null, ['id' => $post['id']], $data);
+          
+          // bila tipe software nya adalah freeware maka masukkan lisensinya secara otomatis sebagai freeware
+          if($post['is_freeware'] == '1'){
+            $d_software = [
+              'name'            => 'Free License',
+              'purchased_at'    => Carbon::now(),
+              'software_id'     => $post['id'],
+              'is_bulk_license' => 1,
+              'flag_permanent'  => 1,
+              'created_by'      => current_user_session('id'),
+              'created_at'      => Carbon::now(),
+            ];
+
+            $this->M_software->insert('license', $d_software);
+          }else{
+            // hapus data lisensinya ini
+            $this->M_soiftware->delete('license', ['name' => 'Free License', 'software_id' => $post['id']]);
+          }
         }
 
         if ($db) { $status = true; }
@@ -156,7 +193,12 @@ class Software extends Management_Controller {
 				'deleted_by'  => current_user_session('id'),
 			];
 			$db = $this->M_software->update(null, ['id' => $id], $data);
-			if ($db) { $status = true; }
+			if ($db) { 
+        $status = true; 
+        
+        // hapus data license bila ada
+        $this->M_soiftware->delete('license', ['software_id' => $id]);
+      }
 		}
 
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));

@@ -59,6 +59,7 @@
               <thead>
                 <tr>
                   <th class="bg-primary">Name</th>
+                  <th class="bg-primary text-center" style="width:15%">Software Type</th>
                   <th class="bg-primary text-center" style="width:10%">Action</th>
                 </tr>
               </thead>
@@ -92,10 +93,19 @@
       <div class="modal-body">
         <form class="form-horizontal main-form">
           <div class="form-group row">
-            <label class="col-sm-2 control-label">Name</label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
               <input type="hidden" name="id">
               <input type="text" name="name" class="form-control" placeholder="Input data">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-3 control-label">Software Type</label>
+            <div class="col-sm-9">
+              <select name="is_freeware" class="select2-general">
+                <option value="0">NON FREEWARE</option>
+                <option value="1">FREEWARE</option>
+              </select>
             </div>
           </div>
         </form>
@@ -118,7 +128,7 @@
 <!-- START SCRIPTS -->
 <script>
   var module_url      = '<?= (isset($module_url)) ? $module_url : '' ?>';
-  var table_columns   = ['name', 'action'];
+  var table_columns   = ['name','type','action'];
   var table_url       = module_url + "/ajax_module_index";
 </script>
 <!-- END SCRIPTS -->
