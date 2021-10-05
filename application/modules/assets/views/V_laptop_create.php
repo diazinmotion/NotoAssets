@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-lg-10 col-lg-offset-1">
-    <form method="POST" action="<?= current_url() ?>" class="form-horizontal main-form">
+    <form method="POST" action="<?= current_url() ?>" class="form-horizontal main-form" enctype='multipart/form-data'>
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs pull-right">
           <? if(str_replace(base_url(), null, current_url()) != 'assets/laptop/create'){ ?>
@@ -290,6 +290,11 @@
                   <label class="col-sm-3 control-label">Encryption File</label>
                   <div class="col-sm-9">
                     <input type="file" name="encryption_recovery_file" class="form-control">
+                    <small class="clearfix">Accepted Format: zip, rar, txt</small>
+                    <? if($db && $db[0]->encryption_recovery_file) { ?>
+                      <small class="clearfix">Uploaded File: <?= anchor('assets/laptop/download_encryption_file/'.base64_encode($db[0]->id), 'Download') ?></small>
+                      <input type="hidden" name="original_file_name" value="<?= ($db) ? $db[0]->encryption_recovery_file : null ?>">
+                    <? } ?>
                   </div>
                 </div>
                 <hr>

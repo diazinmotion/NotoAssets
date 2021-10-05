@@ -114,6 +114,31 @@ class Laptop extends Management_Controller {
             'updated_at' => Carbon::now(),
           ];
         }
+
+        // upload file recovery
+        if($_FILES){
+          $original_file = isset($post['original_file_name']) ? $post['original_file_name'] : null;
+
+          $config['upload_path']      = getcwd().'/../uploads/';
+          $config['allowed_types']    = 'zip|rar|txt';
+          $config['file_ext_tolower'] = true;
+          $config['encrypt_name']     = true;
+          $config['max_size']         = 0;
+
+          $this->load->library('upload', $config);
+
+          if(! $this->upload->do_upload('encryption_recovery_file')){
+            $msg = $this->upload->display_errors();
+          }else{
+            // berhasil diupload, maka hapus file yang lama bila ada
+            if($original_file){
+              @unlink(getcwd().'/../uploads/'.$original_file);
+            }
+
+            $d = $this->upload->data();
+            $data += ['encryption_recovery_file' => $d['file_name']];
+          }
+        }
         
         // dapatkan data software untuk aset ini
         if(isset($post['software_id'])){
@@ -271,6 +296,28 @@ class Laptop extends Management_Controller {
       ];
       
       $this->load->view('layouts/cms/V_master', $data);
+    }
+  }
+
+  public function download_encryption_file($id = null){
+    if($id){
+      $id = base64_decode($id);
+      if(! is_numeric((int) base64_decode($id))){
+        show_404();
+      }else{
+        if($id){
+          $db = $this->M_laptop->get('laptop', ['id' => $id]);    
+          if(! $db){ 
+            show_404();
+          }else{
+            // download file
+            $url = getcwd().'/../uploads/'.$db[0]->encryption_recovery_file;
+            force_download($url, null);
+          }
+        }
+      }
+    }else{
+      show_404();
     }
   }
 
