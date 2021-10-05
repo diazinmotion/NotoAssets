@@ -29,6 +29,7 @@
         </a>
         <ul class="treeview-menu">
           <li><a href="<?= base_url('assets/laptop') ?>"><i class="fa fa-circle-o"></i> Laptops</a></li>
+          <li><a href="<?= base_url('assets/laptop_handover') ?>"><i class="fa fa-circle-o"></i> Laptops Handovers</a></li>
           <li><a href="#"><i class="fa fa-circle-o"></i> General Assets <span class="pull-right badge">SOON</span></a></li>
         </ul>
       </li>
