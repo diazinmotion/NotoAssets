@@ -25,16 +25,24 @@
 			</div>
 			<?php endif;?>
 			<div class="col-lg-10 col-lg-offset-1 col-xs-10 col-xs-offset-1">
+				<center>It looks like this is your first time using this app.<br>To continue please create an admin user first.</center>
+				<br>
 				<form method="POST" action="<?= current_url() ?>">
+					<div class="form-group">
+						<input type="text" name="full_name" class="form-control" placeholder="Full Name">
+					</div>
 					<div class="form-group">
 						<input type="email" name="email" class="form-control" placeholder="Email">
 					</div>
 					<div class="form-group">
 						<input type="password" name="password" class="form-control" placeholder="Password">
 					</div>
+					<div class="form-group">
+						<input type="password" name="password_confirm" class="form-control" placeholder="Password Again">
+					</div>
 					<div class="row">
 						<div class="col-xs-12">
-							<button type="submit" class="btn btn-primary btn-block">Sign In</button>
+							<button type="submit" class="btn btn-primary btn-block">Sign Up</button>
 						</div>
 					</div>
 				</form>

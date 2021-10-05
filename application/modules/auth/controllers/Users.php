@@ -122,7 +122,7 @@ class Users extends Management_Controller {
 
         // cek apakah ada password dan password confirmation?
         if($post['password'] && $post['password_confirm'] && ($post['password'] == $post['password_confirm'])){
-          $hashed = hash_hmac("sha256", $password, PK_SECRET);
+          $hashed = hash_hmac("sha256", $post['password'], PK_SECRET);
           $data   += [
             'password' => password_hash($hashed, PASSWORD_BCRYPT)
           ];

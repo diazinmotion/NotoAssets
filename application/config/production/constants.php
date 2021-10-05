@@ -87,7 +87,7 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 // APPLICATION SPECIFIC
 defined('THEME_PATH')           OR define('THEME_PATH', 'assets/');
 defined('APP_NAME')             OR define('APP_NAME', 'NotoAssets');
-defined('APP_COMPANY')          OR define('APP_COMPANY', 'SM');
+defined('APP_COMPANY')          OR define('APP_COMPANY', 'SM Technology');
 defined('APP_VERSION')          OR define('APP_VERSION', '1.0.0');
 defined('APP_SESSION_NAME')     OR define('APP_SESSION_NAME', 'DZN_INVEN_SESS');
 

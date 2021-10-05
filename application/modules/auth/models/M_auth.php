@@ -11,6 +11,13 @@ class M_auth extends MY_Model {
     $this->seq_name = 'id_user_loket_seq';
 	}
 
+	function get_users(){
+		$this->db->select('COUNT(id) as total');
+		$q = $this->db->get($this->tabel);
+
+		return ($q) ? $q->row() : false;
+	}
+
 	function get_login($email = null){
 		$this->db->select('id, email, password, full_name, flag_super_admin, flag_allowed, last_login');
 		$this->db->where([
