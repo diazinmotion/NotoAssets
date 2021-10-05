@@ -406,6 +406,38 @@ class Laptop extends Management_Controller {
 		$this->output->set_content_type('application/json')->set_output(json_encode(compact('status', 'msg')));
   }
 
+  function ajax_get_laptop(){
+    $data   = [];
+    $like   = [];
+    $where  = [];
+    $param  = $this->input->post('param');
+
+    if($param){
+      $like = [
+        'lower(l.name)'           => strtolower($param),
+        'lower(l.code)'           => strtolower($param),
+        'lower(l.serial_number)'  => strtolower($param),
+        'lower(mo.name)'          => strtolower($param),
+        'lower(b.name)'           => strtolower($param),
+      ];
+    }
+
+    $join = [
+      'master_model mo' => 'mo.id = l.model_id',
+      'master_brand b'  => 'b.id = mo.brand_id',
+    ];
+
+    $db = $this->M_laptop->get('laptop l', $where, $join, null, ['l.name' => 'asc'], 100, null, $like, "l.*, mo.name as model_name, b.name as brand_name");
+    foreach($db as $i => $v){
+      $data[] = [
+        'id'    => $v->id, 
+        'text'  => sprintf("%s / %s (%s %s)", $v->code, $v->name, $v->brand_name, $v->model_name)
+      ];
+    }
+
+    $this->output->set_content_type('application/json')->set_output(json_encode($data));
+  }
+
   function _table_software($id = null){
     // set data content
     $data_content = [];

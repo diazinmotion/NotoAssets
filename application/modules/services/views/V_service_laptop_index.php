@@ -96,7 +96,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" style="color:white;">&times;</span>
         </button>
-        <h4 class="modal-title text-bold">New Item</h4>
+        <h4 class="modal-title text-bold">New Service</h4>
       </div>
       <div class="modal-body">
         <form class="form-horizontal main-form">
@@ -156,7 +156,7 @@
               </div>
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group row end-date-box" style="display:none">
             <label class="col-sm-4 control-label">End Date</label>
             <div class="col-sm-8">
               <div class="input-group date">
@@ -165,6 +165,7 @@
                 </div>
                 <input type="text" name="service_end" readonly class="dtp form-control" placeholder="Input data">
               </div>
+              <small class="clearfix">Update end date if the service has been done. System will mark this service as DONE.</small>
             </div>
           </div>
           <div class="form-group row">
