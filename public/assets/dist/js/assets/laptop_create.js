@@ -524,6 +524,7 @@ function _reInitialize(){
       data: function (params) {
         var queryParameters = {
           param: params.term,
+          laptop_id: id
         }
 
         return queryParameters;

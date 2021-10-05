@@ -164,6 +164,7 @@ class Checklists extends Management_Controller {
     $data   = [];
     $like   = [];
     $where  = [];
+    $post   = $this->input->post();
     $param  = $this->input->post('param');
 
     if($param){
@@ -172,7 +173,13 @@ class Checklists extends Management_Controller {
       ];
     }
 
-    $db = $this->M_checklist->get(null, [], null, null, ['name' => 'asc'], null, null, null, 'id, name');
+    // list semua checklist yang sudah dimiliki oleh laptop tertentu
+    if(isset($post['laptop_id'])){
+      $post['laptop_id'] = base64_decode($post['laptop_id']);
+      $where = 'id NOT IN (select checklist_id from checklist_laptop s where s.laptop_id = '.$post['laptop_id'].')';
+    }
+
+    $db = $this->M_checklist->get(null, $where, null, null, ['name' => 'asc'], null, null, null, 'id, name');
     foreach($db as $i => $v){
       $data[] = [
         'id'    => $v->id, 

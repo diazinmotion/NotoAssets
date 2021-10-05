@@ -524,6 +524,7 @@
 
 <!-- START SCRIPTS -->
 <script>
+  var id          = '<?= ($id)?: '' ?>';
   var has_save    = <?= ($has_save) ? 'true' : 'false' ?>;
   var popup_msg   = '<?= ($message) ? implode(',', $message) : '' ?>';
   var module_url  = '<?= (isset($module_url)) ? $module_url : '' ?>';

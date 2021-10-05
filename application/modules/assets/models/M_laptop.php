@@ -321,6 +321,19 @@ class M_laptop extends MY_Model {
 
 			// insert ke tabel handover_laptop
 			$this->db->insert('handover_laptop', $temp);
+
+			// masukkan data log aset ini
+			$a_link 	= anchor('assets/laptop_handover', 'Go To Detail');
+			$data_log = [
+				'events' 			=> 'HANDOVER: Asset Handover',
+				'detail' 			=> 'This laptop has been handovered to '.$temp['person_name'].' (cubical '.(($temp['cubical_number']) ?: 'N/A').'). For detail click '.$a_link,
+				'created_by' 	=> current_user_session('id'),
+				'created_at' 	=> Carbon::now(),
+				'laptop_id' 	=> $id,
+				'category' 		=> '2',
+			];
+
+			$this->db->insert('laptop_history', $data_log);
 		}
 		// END HANDOVER
 
