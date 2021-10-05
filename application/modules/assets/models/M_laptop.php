@@ -187,7 +187,7 @@ class M_laptop extends MY_Model {
 		return $this->db->trans_status();
 	}
 
-	function proccess_data($id = null, $header = [], $software = [], $laptop_checklist = [], $checklist = []){
+	function proccess_data($id = null, $header = [], $software = [], $laptop_checklist = [], $checklist = [], $handover = []){
 		// variable untuk data software
 		$software_id 							= [];
 		$software_insert 					= [];
@@ -313,6 +313,16 @@ class M_laptop extends MY_Model {
 			$this->db->insert('laptop_history', $data_log);
 		}
 		// END INSERT LOG
+
+		// START HANDOVER
+		if($handover){
+			$temp = $handover;
+			$temp += ['laptop_id' => $id];
+
+			// insert ke tabel handover_laptop
+			$this->db->insert('handover_laptop', $temp);
+		}
+		// END HANDOVER
 
 		$this->db->trans_complete();
 

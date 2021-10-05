@@ -47,6 +47,7 @@ class Laptop extends Management_Controller {
       $data             = [];
       $data_software    = [];
       $data_checklist   = [];
+      $data_handover    = [];
       $laptop_checklist = [];
 
       $this->form_validation->set_rules('entity_id', 'Entity', 'numeric|trim');
@@ -180,7 +181,20 @@ class Laptop extends Management_Controller {
         }
         // END CHECKLIST ITEM STATUS
 
-        $db = $this->M_laptop->proccess_data($id, $data, $data_software, $laptop_checklist, $data_checklist);
+        // START HANDOVER (IF ANY)
+        if(isset($post['ho_location_id'])){
+          $data_handover = [
+            'person_name'     => ($post['ho_person_name']) ? $post['ho_person_name'] : null,
+            'location_id'     => ($post['ho_location_id']) ? $post['ho_location_id'] : null,
+            'cubical_number'  => ($post['ho_cubical_number']) ? $post['ho_cubical_number'] : null,
+            'handovered_at'   => ($post['ho_handovered_at_date'] && $post['ho_handovered_at_time']) ? Carbon::parse($post['ho_handovered_at_date'].' '.$post['ho_handovered_at_time']) : null,
+            'created_by'      => current_user_session('id'),
+            'created_at'      => Carbon::now()
+          ];
+        }
+        // END HANDOVER (IF ANY)
+
+        $db = $this->M_laptop->proccess_data($id, $data, $data_software, $laptop_checklist, $data_checklist, $data_handover);
         if(! $db){
           $msg[] = 'Cant save this asset for this moment. Please try again later.';
         }
@@ -245,6 +259,7 @@ class Laptop extends Management_Controller {
       $data['l_status']   = $this->laptop_status;
       $data['t_software'] = $this->_table_software($id);
       $data['t_logs']     = $this->_table_logs($id);
+      $data['t_handover'] = $this->_table_handover($id);
       $data['has_save']   = ($this->session->flashdata('has_save')) ?: false;
       $data['message']    = ($this->session->flashdata('message')) ?: [];
       $data['page_title'] = ($id) ? "Edit Laptop" : "New Laptop";
@@ -547,5 +562,58 @@ class Laptop extends Management_Controller {
     }
 
     return generate_table('table-logs');
+  }
+
+  function _table_handover($id = null){
+    // set data content
+    $db = false;
+    
+    // set heading
+    $this->table->set_heading(
+      ['data' => 'User & Cubical', 'class' => 'bg-primary', 'style' => 'width:30%'],
+      ['data' => 'Location', 'class' => 'bg-primary'],
+      ['data' => 'Date', 'class' => 'bg-primary text-center', 'style' => 'width:20%'],
+      ['data' => 'Status', 'class' => 'bg-primary text-center', 'style' => 'width:15%']
+    );
+
+    if($id){
+      $select = "
+        hl.*,
+        e.name as entity_name, 
+        l.name as laptop_name, 
+        lo.name as location_name,
+        u.full_name as full_name
+      ";
+
+      $join   = [
+        'laptop l'            => 'l.id = hl.laptop_id',
+        'master_location lo'  => 'lo.id = hl.location_id',
+        'master_entity e'     => 'e.id = lo.entity_id',
+        'users u'             => 'u.id = hl.created_by',
+      ];
+
+      $db   = $this->M_laptop->get('handover_laptop hl', ['hl.laptop_id' => $id], $join, 'left', ['hl.handovered_at' => 'desc'], null, null, null, $select);
+      foreach($db as $i => $v){
+        // status indicator
+        $s_status = ($i == 0) ? '<span class="label label-primary">CURRENT</span>' : null;
+        $this->table->add_row(
+          ['data' => '<b>'.$v->person_name.'</b>
+                      <small class="clearfix">Cubical: '.$v->cubical_number.'</small>'],
+          ['data' => '<b>'.$v->entity_name.'</b>
+                      <small class="clearfix">Location: '.$v->location_name.'</small>'],
+          ['data' => '<center>'.Carbon::parse($v->handovered_at)->format('d M Y - H:i').'
+                      <small class="clearfix">By: '.$v->full_name.'</small></center>'],
+          ['data' => '<center>'.$s_status.'</center>'],
+        );
+      }
+    }
+
+    if(! $db){
+      $this->table->add_row(
+        ['data' => '<center class="text-bold">No Handover History Available For This Laptop</center>', 'colspan' => 4]
+      );
+    }
+
+    return generate_table('table-handover');
   }
 }

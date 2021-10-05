@@ -239,36 +239,39 @@ function _reInitialize(){
     format: 'dd-mm-yyyy'
   });
 
-  $('.location_id').select2({
-    tags: false,
-    width: '100%',
-    placeholder: 'Search an item',
-    ajax: {
-      url: base_url + 'master/location/ajax_get_location',
-      dataType: 'json',
-      type: "POST",
-      data: function (params) {
-        var queryParameters = {
-          param: params.term,
-          entity_id: $('.entity_id').val()
+  $.each(['.location_id, .ho_location_id'], function(_, v){
+    
+    $(v).select2({
+      tags: false,
+      width: '100%',
+      placeholder: 'Search an item',
+      ajax: {
+        url: base_url + 'master/location/ajax_get_location',
+        dataType: 'json',
+        type: "POST",
+        data: function (params) {
+          var queryParameters = {
+            param: params.term,
+            entity_id: ((v == '.location_id') ? $('.entity_id').val() : $('.ho_entity_id').val())
+          }
+  
+          return queryParameters;
+        },
+        processResults: function (data) {
+          return {
+            results: $.map(data, function (item) {
+              return {
+                id: item.id,
+                text: item.text
+              }
+            })
+          };
         }
-
-        return queryParameters;
-      },
-      processResults: function (data) {
-        return {
-          results: $.map(data, function (item) {
-            return {
-              id: item.id,
-              text: item.text
-            }
-          })
-        };
       }
-    }
+    });
   });
 
-  $('.entity_id').select2({
+  $('.entity_id, .ho_entity_id').select2({
     tags: false,
     width: '100%',
     placeholder: 'Search an item',

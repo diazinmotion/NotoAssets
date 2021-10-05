@@ -13,6 +13,7 @@
               <li role="presentation"><a role="menuitem" tabindex="-1" href="#" class="text-red btn-laptop-delete" data-id="<?= ($db) ? $db[0]->id : null ?>"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
             </ul>
           </li>
+          <li><a href="#handover" data-toggle="tab">Handovers</a></li>
           <li><a href="#history" data-toggle="tab">Asset Logs</a></li>
           <li><a href="#todo" data-toggle="tab">Checklists</a></li>
           <? } ?>
@@ -353,6 +354,8 @@
                 <div class="row">
                   <div class="col-lg-12">
                     <b>CHECKLIST</b>
+                    <p>You can choose multiple checklists at once that have already been definded. Want to define new checklist? <a href="<?= base_url('checklists') ?>" target="_blank" rel="noopener noreferrer">Create a new one here</a>.</p>
+
                     <div class="form-group row">
                       <div class="col-lg-12">
                         <select name="checklist_id[]" class='checklist_id'></select>
@@ -420,6 +423,82 @@
               </div>
               <div class="col-lg-8">
                 <?= $t_logs ?>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="handover">
+            <div class="row">
+              <div class="col-lg-4">
+                <h4 class="text-bold text-primary">Handovers</h4>
+                <hr>
+                <b>HOW TO USE:</b>
+                <p>
+                  List all historical data about handover for this specific asset. 
+                  You can handover this asset to other person by using provided form in this section.
+                </p>
+              </div>
+              <div class="col-lg-8">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <b>NEW HANDOVER</b>
+                    <p>Please fill the below form to hand this asset over to the following person. After completed the form, click the save button below.</p>
+                    
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label">Person Name</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="ho_person_name" class="form-control" placeholder="Input data">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label">Cubical</label>
+                      <div class="col-sm-9">
+                        <input type="text" name="ho_cubical_number" class="form-control" placeholder="Input data">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label">Entity</label>
+                      <div class="col-lg-9">
+                        <?= form_dropdown('ho_entity_id', [], null, 'class="ho_entity_id"') ?>
+                      </div>
+                      <div class="col-lg-12 text-right">
+                        <a href="<?= base_url('master/entity') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label">Location</label>
+                      <div class="col-sm-9">
+                        <?= form_dropdown('ho_location_id', [], null, 'class="ho_location_id"') ?>
+                      </div>
+                      <div class="col-lg-12 text-right">
+                        <a href="<?= base_url('master/location') ?>" target="_blank"><i class="fa fa-plus-circle fa-fw"></i> Add New</a>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label">Handover Time</label>
+                      <div class="col-sm-5">
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input type="text" name="ho_handovered_at_date" class="dtp-max-today form-control" placeholder="Input data" value="<?= date('d-m-Y') ?>">
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="input-group time">
+                          <div class="input-group-addon">
+                            <i class="fa fa-clock-o"></i>
+                          </div>
+                          <input type="time" name="ho_handovered_at_time" class="form-control" placeholder="Input data" value="<?= date('h:i') ?>">
+                        </div>
+                      </div>
+                    </div>
+
+                    <hr>
+                  </div>
+                  <div class="col-lg-12">
+                    <?= $t_handover ?>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
