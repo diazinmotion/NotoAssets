@@ -202,8 +202,7 @@ class M_laptop extends MY_Model {
 
 		unset(
 			$header['flag_status_original'],
-			$header['code_original'],
-		);
+			$header['code_original']);
 		// END ORIGINAL DATA
 		
 		// START HEADER
