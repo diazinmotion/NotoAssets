@@ -650,8 +650,7 @@ class Laptop extends Management_Controller {
                       <small class="clearfix">Location: '.$v->location_name.'</small>'],
           ['data' => '<center>'.Carbon::parse($v->handovered_at)->format('d M Y - H:i').'
                       <small class="clearfix">By: '.$v->full_name.'</small></center>'],
-          ['data' => '<center>'.$s_status.'</center>'],
-        );
+          ['data' => '<center>'.$s_status.'</center>'] );
       }
     }
 
