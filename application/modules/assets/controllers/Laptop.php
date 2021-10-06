@@ -597,7 +597,7 @@ class Laptop extends Management_Controller {
         $this->table->add_row(
           ['data' => '<b>'.$v->events.'</b><small class="clearfix">Date: '.Carbon::parse($v->created_at)->format('d/m/Y H:i').'</small>'],
           ['data' => $v->detail],
-          ['data' => '<center>'.$v->full_name.'</center>'],
+          ['data' => '<center>'.$v->full_name.'</center>']
         );
       }
     }
