@@ -77,25 +77,25 @@ class Laptop extends Management_Controller {
         $data = [
           'code'                  => $post['code'],
           'name'                  => $post['name'],
-          'entity_id'             => (isset($post['entity_id'])) ? $post['entity_id'] : null,
-          'location_id'           => (isset($post['location_id'])) ? $post['location_id'] : null,
+          'entity_id'             => (isset($post['entity_id']) && $post['entity_id'] != '') ? $post['entity_id'] : null,
+          'location_id'           => (isset($post['location_id']) && $post['location_id'] != '') ? $post['location_id'] : null,
           'serial_number'         => $post['serial_number'],
-          'os_type_id'            => (isset($post['os_type_id'])) ? $post['os_type_id'] : null,
+          'os_type_id'            => (isset($post['os_type_id']) && $post['os_type_id'] != '') ? $post['os_type_id'] : null,
           'os_product_key'        => $post['os_product_key'],
           'pki_email'             => $post['pki_email'],
           'pki_password'          => $post['pki_password'],
           'encryption_password'   => $post['encryption_password'],    
-          'storage_type_id'       => (isset($post['storage_type_id'])) ? $post['storage_type_id'] : null,
+          'storage_type_id'       => (isset($post['storage_type_id']) && $post['storage_type_id'] != '') ? $post['storage_type_id'] : null,
           'storage_type_brand'    => $post['storage_type_brand'],
-          'storage_size'          => $post['storage_size'],
-          'memory_type_id'        => (isset($post['memory_type_id'])) ? $post['memory_type_id'] : null,
+          'storage_size'          => ($post['storage_size'] != '') ? $post['storage_size'] : 0,
+          'memory_type_id'        => (isset($post['memory_type_id']) && $post['memory_type_id'] != '') ? $post['memory_type_id'] : null,
           'memory_brand'          => $post['memory_brand'],
-          'memory_size'           => $post['memory_size'],
-          'account_type_id'       => (isset($post['account_type_id'])) ? $post['account_type_id'] : null,
+          'memory_size'           => ($post['memory_size'] != '') ? $post['memory_size'] : 0,
+          'account_type_id'       => (isset($post['account_type_id']) && $post['account_type_id'] != '') ? $post['account_type_id'] : null,
           'account_email'         => $post['account_email'],
           'flag_status'           => $post['flag_status'],
-          'purchased_at'          => ($post['purchased_at']) ? format_date_to_db($post['purchased_at']) : null,
-          'warranty_expired'      => ($post['warranty_expired']) ? format_date_to_db($post['warranty_expired']) : null,
+          'purchased_at'          => ($post['purchased_at'] && $post['purchased_at'] != '') ? format_date_to_db($post['purchased_at']) : null,
+          'warranty_expired'      => ($post['warranty_expired'] && $post['warranty_expired'] != '') ? format_date_to_db($post['warranty_expired']) : null,
           'model_id'              => (isset($post['model_id'])) ? $post['model_id'] : null,
           'flag_status_original'  => $post['flag_status_original'],
           'code_original'         => $post['code_original']
@@ -143,28 +143,37 @@ class Laptop extends Management_Controller {
         // dapatkan data software untuk aset ini
         if(isset($post['software_id'])){
           foreach($post['software_id'] as $i => $v){
-            $temp_software = [
-              'license_id'    => (isset($post['license_id'][$i])) ? $post['license_id'][$i] : null,
-              'expiration_at' => (isset($post['software_expired_at'][$i]) && $post['software_expired_at'][$i]) ? format_date_to_db($post['software_expired_at'][$i]) : null,
-              'installed_at'  => (isset($post['software_install_at'][$i]) && $post['software_install_at'][$i]) ? format_date_to_db($post['software_install_at'][$i]) : null,
-              'product_key'   => $post['software_product_key'][$i]
-            ];
-  
-            if(is_numeric($i)){
-              // update
-              $temp_software += [
-                'updated_by' => current_user_session('id'),
-                'updated_at' => Carbon::now(),
-              ];
+            // cek apabila license id kosong, maka kembalikan ke halaman sebelumnya
+            if(! isset($post['license_id'][$i]) || $post['license_id'] == ''){
+              $this->session->set_flashdata('has_save', true);
+              $this->session->set_flashdata('message', 'Software must have at least one license choosen.');
+
+              redirect('assets/laptop/'.(($id) ? 'edit/'.base64_encode($id) : 'create'));
+              break;
             }else{
-              // insert
-              $temp_software += [
-                'created_by' => current_user_session('id'),
-                'created_at' => Carbon::now(),
+              $temp_software = [
+                'license_id'    => (isset($post['license_id'][$i])) ? $post['license_id'][$i] : null,
+                'expiration_at' => (isset($post['software_expired_at'][$i]) && $post['software_expired_at'][$i]) ? format_date_to_db($post['software_expired_at'][$i]) : null,
+                'installed_at'  => (isset($post['software_install_at'][$i]) && $post['software_install_at'][$i]) ? format_date_to_db($post['software_install_at'][$i]) : null,
+                'product_key'   => $post['software_product_key'][$i]
               ];
+    
+              if(is_numeric($i)){
+                // update
+                $temp_software += [
+                  'updated_by' => current_user_session('id'),
+                  'updated_at' => Carbon::now(),
+                ];
+              }else{
+                // insert
+                $temp_software += [
+                  'created_by' => current_user_session('id'),
+                  'created_at' => Carbon::now(),
+                ];
+              }
+    
+              $data_software[$i] = $temp_software;
             }
-  
-            $data_software[$i] = $temp_software;
           }
         }
 

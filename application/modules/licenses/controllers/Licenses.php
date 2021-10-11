@@ -52,10 +52,10 @@ class Licenses extends Management_Controller {
           'software_id'           => $post['software_id'],
           'is_bulk_license'       => $post['is_bulk_license'],
           'flag_permanent'        => $post['flag_permanent'],
-          'purchased_at'          => (isset($post['purchased_at'])) ? format_date_to_db($post['purchased_at']) : null,
+          'purchased_at'          => (isset($post['purchased_at']) && $post['purchased_at'] != '') ? format_date_to_db($post['purchased_at']) : null,
           'purchased_place'       => $post['purchased_place'],
-          'universal_expired_at'  => (isset($post['universal_expired_at'])) ? format_date_to_db($post['universal_expired_at']) : null,
-          'universal_product_key' => (isset($post['universal_product_key'])) ? $post['universal_product_key'] : null,
+          'universal_expired_at'  => (isset($post['universal_expired_at']) && $post['universal_expired_at'] != '') ? format_date_to_db($post['universal_expired_at']) : null,
+          'universal_product_key' => (isset($post['universal_product_key']) && $post['universal_product_key'] != '') ? $post['universal_product_key'] : null,
           'quota'                 => (isset($post['quota'])) ? $post['quota'] : 0,
         ];
 
