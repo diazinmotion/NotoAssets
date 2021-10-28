@@ -43,11 +43,13 @@ RUN cd /var/www/html \
     && /bin/bash -c "/usr/bin/mysqld_safe --skip-grant-tables &" \
     && sleep 5 \
     && mysql -u root -e "CREATE DATABASE invsys_db" \
-    && mysql -u root invsys_db < invsys_db.sql \
+    && mysql -u root invsys_db < invsys_db.sql \ 
+    && mysql -u root -e "FLUSH PRIVILEGES;CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';GRANT ALL PRIVILEGES ON * . * TO 'user'@'localhost';" \
+    && a2enmod rewrite \
     && chmod +x /docker-entrypoint.sh
 
 RUN apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-EXPOSE 3306 80
+EXPOSE 80
 
 ENTRYPOINT "/docker-entrypoint.sh"
