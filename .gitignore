@@ -1,10 +1,10 @@
-application/cache/*
-!application/cache/index.html
-!application/cache/.htaccess
+src/application/cache/*
+!src/application/cache/index.html
+!src/application/cache/.htaccess
 
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
+src/application/logs/*
+!src/application/logs/index.html
+!src/application/logs/.htaccess
 
-composer.lock
-/vendor/
+src/composer.lock
+src/vendor/
